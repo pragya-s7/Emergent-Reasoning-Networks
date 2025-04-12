@@ -1,6 +1,6 @@
 // defiRM.ts
-import { KnowledgeGraph } from "../../core/knowledge-graph";
-import { ReasoningPathway } from "../../core/types";
+import { KnowledgeGraph } from "../../core/knowledge-graph/knowledgeGraph";
+import { ReasoningPathway } from "../../core/types/types";
 
 export function runDeFiRM(subquery: string, kg: KnowledgeGraph): ReasoningPathway {
   return {

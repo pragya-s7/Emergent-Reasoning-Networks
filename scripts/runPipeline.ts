@@ -1,6 +1,6 @@
 import { parseFile } from "../data-ingestion/file-parser/fileParser";
-import { KnowledgeGraph } from "../core/knowledge-graph";
-import { decomposeQuery } from "../core/orchestrator";
+import { KnowledgeGraph } from "../core/knowledge-graph/knowledgeGraph";
+import { decomposeQuery } from "../core/orchestrator/orchestrator";
 import { runDeFiRM } from "../reasoning-modules/defi/defiRM";
 import { validateLogic } from "../validation-nodes/logical/logicalVN";
 import { calculateTrustScore } from "../eigenlayer-avs/sdk/avs";

@@ -1,5 +1,5 @@
 // avs.ts
-import { ValidationResult } from "../../core/type/types";
+import { ValidationResult } from "../../core/types/types";
 
 export function calculateTrustScore(results: ValidationResult[]): number {
   const scoreMap = { valid: 1, ambiguous: 0.5, invalid: 0 };
