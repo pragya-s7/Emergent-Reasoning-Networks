@@ -115,8 +115,9 @@ class KnowledgeGraph:
             self.relations.append(rel)
 
     def query(self, *, subject=None, predicate=None, object_=None,
-              subject_type=None, object_type=None,
-              min_confidence=None, after=None, before=None):
+          subject_type=None, object_type=None,
+          min_confidence=None, after=None, before=None,
+          metadata_filter=None):
         results = []
         for rel in self.relations:
             subj = self.entities[rel.subject_id]
@@ -138,9 +139,17 @@ class KnowledgeGraph:
                 continue
             if before and rel.created_at > before:
                 continue
+            if metadata_filter:
+                for k, v in metadata_filter.items():
+                    if rel.metadata.get(k) != v:
+                        break
+                else:
+                    results.append((subj, rel, obj))
+                continue
 
             results.append((subj, rel, obj))
         return results
+
 
     def __str__(self):
         lines = []
