@@ -1,6 +1,20 @@
-from knowledgeGraph import KnowledgeGraph
+import sys
+import os
+
+# Add project root to path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 from reasoning_modules.defi_risk_rm import run_defi_risk_rm
 
+# Define a simple alignment profile
+alignment_profile = {
+    "risk_tolerance": "medium",
+    "ethical_constraints": ["no_harm", "transparency"],
+    "user_goals": ["security", "reliability"]
+}
+
+# Load the knowledge graph
 kg = KnowledgeGraph()
 kg.load_from_json("output/knowledge_graph.json")
 
@@ -19,7 +33,11 @@ for src in result["source_triples"]:
     print("-", src)
 
 
-from validation-nodes.logical_vn import run_logical_vn
+# Change these imports:
+from validation_nodes.logical_vn import run_logical_vn
+from validation_nodes.grounding_vn import run_grounding_vn
+from validation_nodes.novelty_vn import run_novelty_vn
+from validation_nodes.alignment_vn import run_alignment_vn
 
 vn_result = run_logical_vn(result, openai_key)
 
@@ -29,7 +47,7 @@ print("Score:", vn_result["score"])
 print("Feedback:", vn_result["feedback"])
 
 
-from validation-nodes.grounding_vn import run_grounding_vn
+from validation_nodes.grounding_vn import run_grounding_vn
 
 grounding_result = run_grounding_vn(result, kg)
 
@@ -39,7 +57,7 @@ print("Score:", grounding_result["score"])
 print("Feedback:", grounding_result["feedback"])
 
 
-from validation-nodes.novelty_vn import run_novelty_vn
+from validation_nodes.novelty_vn import run_novelty_vn
 
 novelty_result = run_novelty_vn(result, kg, openai_key)
 
