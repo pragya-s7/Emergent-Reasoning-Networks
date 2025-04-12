@@ -1,5 +1,8 @@
 import openai
 import datetime
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from reasoning_modules.base.module import ReasoningModule
 
 class DeFiRiskReasoningModule(ReasoningModule):

@@ -14,7 +14,7 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 RM_REGISTRY = {
     "defi_risk": {
         "description": "DeFi analysis of token behaviors, liquidity, and risks",
-        "module": "reasoning_modules.defi_risk_rm",
+        "module": "reasoning_modules.defi_risk.index",
         "function": "run_defi_risk_rm",
         "requires_openai": True
     },
