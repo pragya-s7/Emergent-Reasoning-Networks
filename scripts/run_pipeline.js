@@ -1,4 +1,4 @@
-const { addTriple, queryGraph } = require('../core/knowledge-graph/graph');
+const { addTriple, queryGraph } = require('../core/knowledge-graph/knowledgeGraph');
 const { orchestrate } = require('../core/orchestrator/index');
 const { validateLogic } = require('../validation-nodes/logical/index');
 const { computeTrustScore } = require('../eigenlayer-avs/sdk/index');
