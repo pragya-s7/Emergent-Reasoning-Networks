@@ -1,88 +1,156 @@
 # Kairos - The Emergent Reasoning Network
 
 ## File Structure
+```
+.
+├── blockchain
+│   ├── near
+│   ├── rootstock
+│   └── saga
+├── contracts
+│   ├── execution
+│   ├── reasoning-path
+│   ├── trust-score
+│   └── validation-market
+├── core
+│   ├── knowledge-graph
+│   ├── orchestrator
+│   └── types
+├── data-ingestion
+│   ├── file-parser
+│   ├── rpc
+│   ├── rss
+│   └── social
+├── eigenlayer-avs
+│   ├── contracts
+│   └── sdk
+├── examples
+│   ├── dao-treasury
+│   ├── defi-risk-analysis
+│   └── scientific-review
+├── frontend
+│   ├── components
+│   ├── hooks
+│   ├── plugins
+│   └── visualizers
+├── gensyn
+│   ├── deployment
+│   └── training
+├── ip-layer
+│   ├── contracts
+│   └── sdk
+├── pin-ai
+│   └── preferences
+├── reasoning-modules
+│   ├── audit
+│   ├── base
+│   ├── defi
+│   ├── macro
+│   └── sentiment
+├── scripts
+├── upstage
+│   └── document-parser
+└── validation-nodes
+    ├── alignment
+    ├── base
+    ├── grounding
+    ├── logical
+    └── novelty
+```
+blockchain: Contains integrations with various blockchain networks.
 
-```
-kairos/
-├── .github/                      # GitHub specific configuration
-│   ├── ISSUE_TEMPLATE/           # Issue templates
-│   └── workflows/                # CI/CD pipelines
-├── docs/                         # Documentation
-│   ├── architecture/             # System architecture diagrams and descriptions
-│   ├── api/                      # API documentation
-│   ├── quickstart.md             # Quick start guide
-│   ├── reasoning-modules.md      # Documentation for Reasoning Modules
-│   ├── validation-nodes.md       # Documentation for Validation Nodes
-│   └── trust-scoring.md          # Explanation of trust scoring mechanism
-├── packages/                     # Monorepo packages
-│   ├── core/                     # Core functionality
-│   │   ├── src/
-│   │   │   ├── orchestrator/     # Query Orchestrator implementation
-│   │   │   ├── knowledge-graph/  # Knowledge Graph implementation
-│   │   │   └── types/           # Shared TypeScript types
-│   ├── reasoning-modules/        # Reasoning Modules implementation
-│   │   ├── src/
-│   │   │   ├── base/            # Base RM class and interfaces
-│   │   │   ├── defi/            # DeFi specialized RM
-│   │   │   ├── sentiment/       # Sentiment analysis RM
-│   │   │   ├── audit/           # Smart contract audit RM
-│   │   │   └── macro/           # Macro indicators RM
-│   ├── validation-nodes/         # Validation Nodes implementation
-│   │   ├── src/
-│   │   │   ├── base/            # Base VN class and interfaces
-│   │   │   ├── logical/         # Logical validation
-│   │   │   ├── grounding/       # Fact grounding validation
-│   │   │   ├── alignment/       # Alignment validation
-│   │   │   └── novelty/         # Novelty/usefulness validation
-│   ├── eigenlayer-avs/           # EigenLayer AVS integration
-│   │   ├── contracts/           # AVS smart contracts
-│   │   └── sdk/                 # AVS SDK integration
-│   ├── blockchain/               # Blockchain integrations
-│   │   ├── rootstock/           # Rootstock integration
-│   │   ├── saga/                # Saga Chainlet integration
-│   │   └── near/                # NEAR Protocol integration
-│   ├── ip-layer/                 # IP Layer (Story Protocol) integration
-│   │   ├── contracts/           # IP registration contracts
-│   │   └── sdk/                 # Story Protocol SDK integration
-│   ├── gensyn/                   # Gensyn Swarm integration
-│   │   ├── training/            # RL training pipelines
-│   │   └── deployment/          # Model deployment utilities
-│   ├── pin-ai/                   # PIN AI alignment integration
-│   │   └── preferences/         # User preference management
-│   ├── upstage/                  # Upstage API integration
-│   │   └── document-parser/     # Document parsing utilities
-│   ├── data-ingestion/           # Data ingestion components
-│   │   ├── rss/                 # RSS feed integration
-│   │   ├── rpc/                 # RPC endpoints for blockchain data
-│   │   ├── social/              # Social media integrations
-│   │   └── file-parser/         # File parsing utilities
-│   └── frontend/                 # Frontend application
-│       ├── components/          # React components
-│       ├── hooks/               # Custom React hooks
-│       ├── pages/               # Page definitions
-│       └── visualizers/         # Reasoning path visualizers
-├── contracts/                    # Smart contracts
-│   ├── reasoning-path/           # Reasoning path management
-│   ├── trust-score/              # Trust score recording
-│   ├── validation-market/        # Validation market contracts
-│   └── execution/                # Strategy execution contracts
-├── examples/                     # Example implementations
-│   ├── defi-risk-analysis/       # DeFi risk analysis example
-│   ├── dao-treasury/             # DAO treasury management example
-│   └── scientific-review/        # Scientific paper review example
-├── scripts/                      # Utility scripts
-│   ├── setup.sh                  # Repository setup script
-│   └── deploy.sh                 # Deployment script
-├── tests/                        # Tests
-│   ├── unit/                     # Unit tests
-│   ├── integration/              # Integration tests
-│   └── e2e/                      # End-to-end tests
-├── .gitignore                    # Git ignore file
-├── package.json                  # Root package.json
-├── tsconfig.json                 # TypeScript configuration
-├── README.md                     # Project README
-└── LICENSE                       # Project license
-```
+near: Integration with NEAR Protocol for the AI Agent Network
+rootstock: Implementation for executing validated DeFi strategies
+saga: Chainlet deployment for Kairos smart contracts
+
+
+contracts: Smart contracts that manage on-chain components of the system.
+
+execution: Contracts that execute validated strategies
+reasoning-path: Manages and records reasoning pathways
+trust-score: Records and calculates trust scores
+validation-market: Handles staking and rewards for validators
+
+
+core: Central system components that coordinate the reasoning network.
+
+knowledge-graph: Builds and maintains the decentralized knowledge base
+orchestrator: Breaks down queries and routes them to appropriate modules
+types: Shared type definitions used across the system
+
+
+data-ingestion: Components for gathering and processing external data.
+
+file-parser: Processes uploaded documents
+rpc: Collects blockchain data via RPC endpoints
+rss: Processes news and other RSS feeds
+social: Gathers data from social media platforms
+
+
+eigenlayer-avs: EigenLayer integration for decentralized validation.
+
+contracts: AVS-specific smart contracts
+sdk: Tools for integrating with the EigenLayer protocol
+
+
+examples: Example implementations demonstrating use cases.
+
+dao-treasury: Treasury management use case
+defi-risk-analysis: DeFi risk assessment example
+scientific-review: Scientific paper review workflow
+
+
+frontend: User interface components.
+
+components: Reusable UI elements
+hooks: Custom React hooks
+plugins: Extensions for the UI
+visualizers: Tools for visualizing reasoning pathways
+
+
+gensyn: Tools for distributed model training.
+
+deployment: Manages deployment of trained models
+training: Implements reinforcement learning through feedback
+
+
+ip-layer: Story Protocol integration for intellectual property rights.
+
+contracts: IP registration smart contracts
+sdk: Integration with Story Protocol
+
+
+pin-ai: Personalization and alignment layer.
+
+preferences: Manages user preferences for customized reasoning
+
+
+reasoning-modules: Specialized AI agents for different reasoning domains.
+
+audit: Smart contract audit reasoning
+base: Common code for all reasoning modules
+defi: DeFi-specific reasoning
+macro: Macroeconomic analysis
+sentiment: Social sentiment analysis
+
+
+scripts: Utility scripts for development and deployment.
+upstage: Document processing capabilities.
+
+document-parser: Parses unstructured documents into structured knowledge
+
+
+validation-nodes: Components for validating reasoning outputs.
+
+alignment: Ensures outputs match user goals
+base: Common code for all validation nodes
+grounding: Verifies factual accuracy
+logical: Checks reasoning structure and logic
+novelty: Assesses originality and usefulness of insights
+
+
+
+
 
 ## Key Component Descriptions
 
