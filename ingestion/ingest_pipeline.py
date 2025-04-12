@@ -1,25 +1,36 @@
 import os
+import dotenv
 from typing import Dict, Any, Optional
 
 from ingestion.upstage_ocr import extract_text_from_file
 from ingestion.triple_extractor import extract_triples_from_text, ingest_triples_into_kg
 from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 
-def run_pipeline(filename: str, upstage_key: str, openai_key: str, 
+# Load environment variables from .env file
+dotenv.load_dotenv()
+
+def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: Optional[str] = None,
                 output_dir: str = "output", existing_kg: Optional[KnowledgeGraph] = None):
     """
     Run the full document ingestion pipeline.
     
     Args:
         filename: Path to the document file
-        upstage_key: Upstage API key
-        openai_key: OpenAI API key
+        openai_key: OpenAI API key (optional, will use environment variable if not provided)
+        upstage_key: Upstage API key (optional, will use environment variable if not provided)
         output_dir: Directory to save the knowledge graph
         existing_kg: Optional existing knowledge graph to update
         
     Returns:
         Updated knowledge graph
     """
+    # Use provided API keys or get from environment
+    openai_key = openai_key or os.environ.get("OPENAI_API_KEY")
+    upstage_key = upstage_key or os.environ.get("UPSTAGE_API_KEY")
+    
+    if not openai_key:
+        raise ValueError("OpenAI API key not provided and not found in environment variables")
+    
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
