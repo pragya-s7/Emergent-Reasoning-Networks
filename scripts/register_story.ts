@@ -18,13 +18,20 @@ interface RegisterIPParams {
 
 export async function registerIP(params: RegisterIPParams) {
   const { ip_metadata, nft_metadata } = params;
-  
-  // Use the correct client method
+
+  // Add trust score and validation metadata
+  const fullMetadata = {
+    ...ip_metadata,
+    trust_score: ip_metadata.trust_score,
+    validation_results: ip_metadata.validation_results,
+    licensing_terms: "CC-BY", // or other
+  };
+
   const response = await client.registerIP({
-    metadata: ip_metadata,
+    metadata: fullMetadata,
     nftMetadata: nft_metadata
   });
-  
+
   return {
     explorerUrl: response.explorerUrl,
     txHash: response.txHash,

@@ -1,0 +1,14 @@
+{
+    "peer_id": "QmXyz123...",
+    "round": 23,
+    "model": "qwen-2.5-0.5b",
+    "validation_rewards": [
+      { "step": "DeFi RM", "score": 0.91 },
+      { "step": "Macro RM", "score": 0.82 },
+      { "step": "Sentiment RM", "score": 0.88 }
+    ],
+    "trust_score": 0.87,
+    "tokens_trained": 124392,
+    "last_updated": "2025-04-13T04:00:00Z"
+  }
+  

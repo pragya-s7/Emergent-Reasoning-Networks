@@ -5,9 +5,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import { Upload, Sparkles, BookOpenCheck, Share2 } from "lucide-react";
+import { Upload, Sparkles, Share2 } from "lucide-react";
 
-// Define types for our state and API responses
+// Define types
 interface ReasoningResult {
   conclusion?: string;
   [key: string]: any;
@@ -20,6 +20,7 @@ interface ValidationResult {
 interface ApiResponse {
   reasoning: ReasoningResult | null;
   validation: ValidationResult | null;
+  swarm?: string[];
   error?: string;
 }
 
@@ -67,7 +68,7 @@ export default function KairosFrontend() {
 
   const handleIPRegister = async () => {
     if (!result?.reasoning) return;
-    
+
     const ipMetadata = result.reasoning || {};
     const nftMetadata = {
       name: "Kairos Insight",
@@ -84,6 +85,19 @@ export default function KairosFrontend() {
     } catch (err) {
       console.error("IP registration failed:", err);
       alert("Failed to register IP. Please try again.");
+    }
+  };
+
+  const handleLoadSwarmLogs = async () => {
+    try {
+      const res = await fetch("/api/swarm");
+      const data = await res.json();
+      // setResult((prev) => ({
+        // ...prev,
+        // swarm: data.lines || ["No logs found"],
+      // }));
+    } catch (err) {
+      console.error("Swarm logs fetch failed:", err);
     }
   };
 
@@ -117,15 +131,32 @@ export default function KairosFrontend() {
           <TabsTrigger value="reasoning">Reasoning</TabsTrigger>
           <TabsTrigger value="validation">Validation</TabsTrigger>
           <TabsTrigger value="graph">Reasoning Pathway</TabsTrigger>
+          <TabsTrigger value="swarm">Swarm Stats</TabsTrigger>
         </TabsList>
+
         <TabsContent value="reasoning">
           <Card><CardContent className="p-4 whitespace-pre-wrap text-sm">{JSON.stringify(result?.reasoning, null, 2)}</CardContent></Card>
         </TabsContent>
+
         <TabsContent value="validation">
           <Card><CardContent className="p-4 whitespace-pre-wrap text-sm">{JSON.stringify(result?.validation, null, 2)}</CardContent></Card>
         </TabsContent>
+
         <TabsContent value="graph">
           <Card><CardContent className="p-4"><i>Reasoning graph visualization coming soon...</i></CardContent></Card>
+        </TabsContent>
+
+        <TabsContent value="swarm">
+          <Card>
+            <CardContent className="p-4 space-y-2">
+              <Button onClick={handleLoadSwarmLogs}>
+                Load Swarm Logs
+              </Button>
+              <pre className="text-sm whitespace-pre-wrap bg-gray-800 p-2 rounded">
+                {result?.swarm?.join("\n") ?? "No swarm data loaded."}
+              </pre>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
