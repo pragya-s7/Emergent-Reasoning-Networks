@@ -1,27 +1,15 @@
 import openai
 from typing import Dict, Any, Optional
 
-# === Optional: Story Protocol Integration ===
-def register_logic_to_story(reasoning_output: Dict[str, Any]) -> Dict[str, str]:
-    """Register logical reasoning path with Story Protocol."""
-    print("📜 [Story Protocol] Registered logical reasoning path as reusable IP.")
-    return {
-        "status": "registered",
-        "cid": "ipfs://mockedCID-logical-12345",
-        "hash": "0xLOGIC_HASH"
-    }
-
-# === LogicalVN with AVS & Story Protocol ===
-def run_logical_vn(reasoning_output: Dict[str, Any], openai_key: str, 
-                  story_threshold: float = 0.9) -> Dict[str, Any]:
+# === LogicalVN ===
+def run_logical_vn(reasoning_output: Dict[str, Any], openai_key: str) -> Dict[str, Any]:
     """
     Validate the logical coherence of reasoning steps.
-    
+
     Args:
         reasoning_output: The output from a reasoning module
         openai_key: OpenAI API key
-        story_threshold: Minimum score to register with Story Protocol
-        
+
     Returns:
         Validation result with validity score and feedback
     """
@@ -39,8 +27,7 @@ def run_logical_vn(reasoning_output: Dict[str, Any], openai_key: str,
             "vn_type": "LogicalVN",
             "valid": False,
             "score": 0.0,
-            "feedback": f"Missing required field in reasoning output: {e}",
-            "story_protocol": None
+            "feedback": f"Missing required field in reasoning output: {e}"
         }
 
     # Build prompt for validation
@@ -79,8 +66,7 @@ Feedback: <brief explanation>
             "vn_type": "LogicalVN",
             "valid": False,
             "score": 0.0,
-            "feedback": f"OpenAI API error: {str(e)}",
-            "story_protocol": None
+            "feedback": f"OpenAI API error: {str(e)}"
         }
 
     # Parse GPT Output
@@ -93,21 +79,14 @@ Feedback: <brief explanation>
             "vn_type": "LogicalVN",
             "valid": False,
             "score": 0.0,
-            "feedback": f"Could not parse validator response: {str(e)}",
-            "story_protocol": None
+            "feedback": f"Could not parse validator response: {str(e)}"
         }
 
     result = {
         "vn_type": "LogicalVN",
         "valid": valid,
         "score": round(score, 2),
-        "feedback": feedback,
-        "story_protocol": None
+        "feedback": feedback
     }
-
-    # Story Protocol Trigger (Optional IP registration)
-    if valid and score >= story_threshold:
-        story_result = register_logic_to_story(reasoning_output)
-        result["story_protocol"] = story_result
 
     return result

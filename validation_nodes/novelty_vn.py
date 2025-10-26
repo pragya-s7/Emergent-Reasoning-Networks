@@ -1,17 +1,7 @@
 import openai
 
-# === Optional: Story Protocol Integration ===
-def register_to_story(reasoning_output):
-    # Placeholder Story Protocol registration (mocked)
-    print("🧠 [Story Protocol] Registered reasoning as IP.")
-    return {
-        "status": "registered",
-        "cid": "ipfs://mockedCID12345",
-        "hash": "0xHASHED"
-    }
-
-# === Novelty VN with Story Protocol + EigenLayer compatibility ===
-def run_novelty_vn(reasoning_output, kg, openai_key, story_threshold=0.85):
+# === Novelty VN ===
+def run_novelty_vn(reasoning_output, kg, openai_key):
     openai.api_key = openai_key
 
     # --- Step 1: Extract KG facts as text
@@ -62,21 +52,14 @@ Feedback: <short explanation>
             "vn_type": "NoveltyVN",
             "valid": False,
             "score": 0.0,
-            "feedback": "Could not parse validator response.",
-            "story_protocol": None
+            "feedback": "Could not parse validator response."
         }
 
     result = {
         "vn_type": "NoveltyVN",
         "valid": novel,
         "score": round(score, 2),
-        "feedback": feedback,
-        "story_protocol": None  # default
+        "feedback": feedback
     }
-
-    # --- Step 4: Register with Story Protocol if novel and trustworthy
-    if novel and score >= story_threshold:
-        story_result = register_to_story(reasoning_output)
-        result["story_protocol"] = story_result
 
     return result

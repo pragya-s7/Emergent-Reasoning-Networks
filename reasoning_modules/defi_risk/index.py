@@ -5,19 +5,19 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from reasoning_modules.base.module import ReasoningModule
 
-class DeFiRiskReasoningModule(ReasoningModule):
+class FinancialAnalysisReasoningModule(ReasoningModule):
     def __init__(self):
-        super().__init__('defi-risk')
+        super().__init__('financial-analysis')
         self.sources = {
-            "protocol_data": "DeFi Protocol Database",
-            "market_data": "Crypto Market Analytics",
-            "security_data": "Smart Contract Security Monitor"
+            "financial_data": "Financial Data Repository",
+            "market_data": "Market Analytics",
+            "risk_data": "Risk Assessment Database"
         }
 
     def run(self, subquery, knowledgeGraph, openai_key=None):
         if not openai_key:
-            raise ValueError("OpenAI API key is required for DeFi risk analysis")
-        
+            raise ValueError("OpenAI API key is required for financial analysis")
+
         openai.api_key = openai_key
 
         # Extract relevant triples from the KG
@@ -28,7 +28,7 @@ class DeFiRiskReasoningModule(ReasoningModule):
 
         # Ask GPT to reason over the facts and answer the query
         prompt = f"""
-You are a DeFi risk analysis agent. You are given the following structured facts:
+You are a financial analysis reasoning agent. You are given the following structured facts from a knowledge graph:
 
 {triples_text}
 
@@ -70,7 +70,7 @@ Sources:
                 structured_steps.append({
                     "step": f"Step {i+1}",
                     "data": step,
-                    "source": self.sources.get("protocol_data", "Analysis"),
+                    "source": self.sources.get("financial_data", "Analysis"),
                     "inference": step
                 })
             
@@ -106,16 +106,21 @@ Sources:
 
 
 # For backward compatibility
-def run_defi_risk_rm(query, kg, openai_key):
+def run_financial_analysis_rm(query, kg, openai_key):
     """Legacy function for backward compatibility"""
-    rm = DeFiRiskReasoningModule()
+    rm = FinancialAnalysisReasoningModule()
     result = rm.run(query, kg, openai_key)
-    
+
     # Convert to old format for compatibility
     return {
-        "module": "defi-risk",
+        "module": "financial-analysis",
         "answer": result["conclusion"],
         "reasoning_steps": [step["data"] for step in result["reasoningPath"]],
         "source_triples": result["source_triples"],
         "confidence": result["confidence"]
     }
+
+# Legacy alias for backward compatibility
+def run_defi_risk_rm(query, kg, openai_key):
+    """Deprecated: use run_financial_analysis_rm instead"""
+    return run_financial_analysis_rm(query, kg, openai_key)

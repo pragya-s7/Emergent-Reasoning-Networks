@@ -1,14 +1,5 @@
-# === Optional: Story Protocol Integration ===
-def register_grounding_to_story(reasoning_output):
-    print("📘 [Story Protocol] Registered fully grounded insight path as composable IP.")
-    return {
-        "status": "registered",
-        "cid": "ipfs://mockedCID-grounded-45678",
-        "hash": "0xGROUND_HASH"
-    }
-
-# === GroundingVN with AVS & Story Protocol ===
-def run_grounding_vn(reasoning_output, kg, story_threshold=1.0):
+# === GroundingVN ===
+def run_grounding_vn(reasoning_output, kg):
     claimed_triples = reasoning_output.get("source_triples", [])
     grounded = 0
     total = len(claimed_triples)
@@ -44,13 +35,7 @@ def run_grounding_vn(reasoning_output, kg, story_threshold=1.0):
         "vn_type": "GroundingVN",
         "valid": valid,
         "score": round(score, 2),
-        "feedback": feedback,
-        "story_protocol": None
+        "feedback": feedback
     }
-
-    # === Story Protocol Trigger (perfect grounding = reusable logical subgraph)
-    if valid and score >= story_threshold:
-        story_result = register_grounding_to_story(reasoning_output)
-        result["story_protocol"] = story_result
 
     return result

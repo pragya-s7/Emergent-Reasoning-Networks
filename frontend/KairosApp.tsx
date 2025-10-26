@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import { Upload, Sparkles, Share2 } from "lucide-react";
+import { Upload, Sparkles } from "lucide-react";
 
 // Define types
 interface ReasoningResult {
@@ -20,12 +20,7 @@ interface ValidationResult {
 interface ApiResponse {
   reasoning: ReasoningResult | null;
   validation: ValidationResult | null;
-  swarm?: string[];
   error?: string;
-}
-
-interface StoryResponse {
-  explorerUrl: string;
 }
 
 export default function KairosFrontend() {
@@ -66,40 +61,6 @@ export default function KairosFrontend() {
     }
   };
 
-  const handleIPRegister = async () => {
-    if (!result?.reasoning) return;
-
-    const ipMetadata = result.reasoning || {};
-    const nftMetadata = {
-      name: "Kairos Insight",
-      description: result.reasoning?.conclusion || "",
-    };
-    try {
-      const res = await fetch("/api/story/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ip_metadata: ipMetadata, nft_metadata: nftMetadata }),
-      });
-      const data: StoryResponse = await res.json();
-      alert(`IP registered! View: ${data.explorerUrl}`);
-    } catch (err) {
-      console.error("IP registration failed:", err);
-      alert("Failed to register IP. Please try again.");
-    }
-  };
-
-  const handleLoadSwarmLogs = async () => {
-    try {
-      const res = await fetch("/api/swarm");
-      const data = await res.json();
-      // setResult((prev) => ({
-        // ...prev,
-        // swarm: data.lines || ["No logs found"],
-      // }));
-    } catch (err) {
-      console.error("Swarm logs fetch failed:", err);
-    }
-  };
 
   return (
     <div className="p-8 space-y-8">
@@ -108,21 +69,18 @@ export default function KairosFrontend() {
         <Label htmlFor="query">Query</Label>
         <Textarea
           id="query"
-          placeholder="What are the risks of this DeFi protocol?"
+          placeholder="Analyze the financial risks in the knowledge graph..."
           value={query}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setQuery(e.target.value)}
         />
         <div className="flex gap-4">
           <Button onClick={handleQuery} disabled={loading}>
-            <Sparkles className="mr-2 h-4 w-4" /> Generate
+            <Sparkles className="mr-2 h-4 w-4" /> Generate Reasoning
           </Button>
           <Label className="flex items-center gap-2 cursor-pointer">
             <Upload className="h-4 w-4" /> Upload PDF
             <Input type="file" accept="application/pdf" className="hidden" onChange={handleFileUpload} />
           </Label>
-          <Button variant="secondary" onClick={handleIPRegister} disabled={!result}>
-            <Share2 className="mr-2 h-4 w-4" /> Register as IP
-          </Button>
         </div>
       </Card>
 
@@ -131,7 +89,6 @@ export default function KairosFrontend() {
           <TabsTrigger value="reasoning">Reasoning</TabsTrigger>
           <TabsTrigger value="validation">Validation</TabsTrigger>
           <TabsTrigger value="graph">Reasoning Pathway</TabsTrigger>
-          <TabsTrigger value="swarm">Swarm Stats</TabsTrigger>
         </TabsList>
 
         <TabsContent value="reasoning">
@@ -144,19 +101,6 @@ export default function KairosFrontend() {
 
         <TabsContent value="graph">
           <Card><CardContent className="p-4"><i>Reasoning graph visualization coming soon...</i></CardContent></Card>
-        </TabsContent>
-
-        <TabsContent value="swarm">
-          <Card>
-            <CardContent className="p-4 space-y-2">
-              <Button onClick={handleLoadSwarmLogs}>
-                Load Swarm Logs
-              </Button>
-              <pre className="text-sm whitespace-pre-wrap bg-gray-800 p-2 rounded">
-                {result?.swarm?.join("\n") ?? "No swarm data loaded."}
-              </pre>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

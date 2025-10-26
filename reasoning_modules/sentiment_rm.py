@@ -7,13 +7,13 @@ class SentimentReasoningModule(ReasoningModule):
         self.sources = {
             "twitter_data": "Twitter API Sentiment Analysis",
             "reddit_data": "Reddit Community Discussions",
-            "community_metrics": "DeFi Community Engagement Tracker"
+            "community_metrics": "Community Engagement Tracker"
         }
 
     def run(self, subquery, knowledgeGraph):
-        # Use the correct query method instead of queryGraph
-        token_data = knowledgeGraph.query(subject="TokenX")
+        # Query knowledge graph for sentiment-related data
         social_data = knowledgeGraph.query(predicate="has_sentiment")
+        engagement_data = knowledgeGraph.query(predicate="engagement_level")
         
         # Structured reasoning process
         reasoning_steps = [
@@ -43,7 +43,7 @@ class SentimentReasoningModule(ReasoningModule):
             "timestamp": datetime.datetime.now().isoformat(),
             "reasoningPath": reasoning_steps,
             "sources": self.sources,
-            "conclusion": "Community sentiment around TokenX is currently negative",
+            "conclusion": "Community sentiment analysis completed based on social media data",
             "confidence": 0.82,
             "relevantMetrics": {
                 "twitter_sentiment": "-0.65",

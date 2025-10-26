@@ -1,50 +1,51 @@
 from reasoning_modules.base.module import ReasoningModule
 import datetime
 
-class AuditReasoningModule(ReasoningModule):
+class SecurityAuditReasoningModule(ReasoningModule):
     def __init__(self):
-        super().__init__('audit')
+        super().__init__('security-audit')
         self.sources = {
-            "audit_history": "Smart Contract Audit Database",
-            "vulnerability_tracker": "DeFi Exploit Monitor",
-            "security_practices": "Protocol Security Standards"
+            "audit_history": "Security Audit Database",
+            "vulnerability_tracker": "Vulnerability Monitor",
+            "security_practices": "Security Standards Repository"
         }
 
     def run(self, subquery, knowledgeGraph):
-        audit_facts = knowledgeGraph.query(subject="TokenX", subject_type="SmartContract")
+        # Query knowledge graph for security-related facts
         vulnerability_data = knowledgeGraph.query(predicate="has_vulnerability")
-        
+        audit_data = knowledgeGraph.query(predicate="last_audited")
+
         reasoning_steps = [
             {
                 "step": "Review audit history",
-                "data": "Smart contract has not been audited in 2 years",
+                "data": "System has not been audited recently",
                 "source": self.sources["audit_history"],
                 "inference": "Outdated security verification"
             },
             {
-                "step": "Analyze similar contracts",
-                "data": "Recent similar contracts have been exploited",
+                "step": "Analyze vulnerabilities",
+                "data": "Known vulnerabilities detected in knowledge graph",
                 "source": self.sources["vulnerability_tracker"],
-                "inference": "Pattern of vulnerabilities in similar implementations"
+                "inference": "Security risks require attention"
             },
             {
                 "step": "Evaluate security practices",
-                "data": "No bug bounty program in place",
+                "data": "Security measures and best practices assessed",
                 "source": self.sources["security_practices"],
-                "inference": "Limited incentives for vulnerability disclosure"
+                "inference": "Security posture evaluation completed"
             }
         ]
-        
+
         return {
             "subquery": subquery,
             "timestamp": datetime.datetime.now().isoformat(),
             "reasoningPath": reasoning_steps,
             "sources": self.sources,
-            "conclusion": "Smart contract audit status indicates high risk",
+            "conclusion": "Security audit analysis completed based on available data",
             "confidence": 0.78,
             "relevantMetrics": {
-                "last_audit_age": "24 months",
-                "similar_exploits": "3 in last 6 months",
-                "security_score": "low"
+                "vulnerability_count": len(vulnerability_data),
+                "audit_records": len(audit_data),
+                "security_score": "moderate"
             }
         }
