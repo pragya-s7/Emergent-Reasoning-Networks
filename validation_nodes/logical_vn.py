@@ -18,10 +18,20 @@ def run_logical_vn(reasoning_output: Dict[str, Any], openai_key: str) -> Dict[st
     
     openai.api_key = openai_key
 
-    # Extract reasoning steps and answer
+    # Extract reasoning steps and answer - handle both formats
     try:
-        reasoning = "\n".join(f"- {step}" for step in reasoning_output["reasoning_steps"])
-        answer = reasoning_output["answer"]
+        if "reasoning_steps" in reasoning_output:
+            reasoning = "\n".join(f"- {step}" for step in reasoning_output["reasoning_steps"])
+            answer = reasoning_output.get("answer", reasoning_output.get("conclusion", ""))
+        elif "reasoningPath" in reasoning_output:
+            reasoning_steps = [
+                step.get("data", step.get("inference", str(step)))
+                for step in reasoning_output["reasoningPath"]
+            ]
+            reasoning = "\n".join(f"- {step}" for step in reasoning_steps)
+            answer = reasoning_output.get("conclusion", "")
+        else:
+            raise KeyError("No reasoning steps found (expected 'reasoning_steps' or 'reasoningPath')")
     except KeyError as e:
         return {
             "vn_type": "LogicalVN",

@@ -5,12 +5,23 @@ def run_novelty_vn(reasoning_output, kg, openai_key):
     openai.api_key = openai_key
 
     # --- Step 1: Extract KG facts as text
+    # Query all relations from KG
+    all_triples = kg.query()
     kg_text = "\n".join(
-        f"{s.label} --{r.predicate}--> {o.label}" for s, r, o in kg.relations
+        f"{s.label} --{r.predicate}--> {o.label}" for s, r, o in all_triples
     )
 
-    # --- Step 2: Get reasoning steps
-    reasoning = "\n".join(f"- {step}" for step in reasoning_output["reasoning_steps"])
+    # --- Step 2: Get reasoning steps - handle both formats
+    if "reasoning_steps" in reasoning_output:
+        reasoning = "\n".join(f"- {step}" for step in reasoning_output["reasoning_steps"])
+    elif "reasoningPath" in reasoning_output:
+        reasoning_steps = [
+            step.get("data", step.get("inference", str(step)))
+            for step in reasoning_output["reasoningPath"]
+        ]
+        reasoning = "\n".join(f"- {step}" for step in reasoning_steps)
+    else:
+        reasoning = str(reasoning_output)
 
     prompt = f"""
 You are a novelty evaluator for AI reasoning.

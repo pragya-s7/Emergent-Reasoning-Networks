@@ -25,23 +25,38 @@ interface ApiResponse {
 
 export default function KairosFrontend() {
   const [query, setQuery] = useState<string>("");
+  const [apiKey, setApiKey] = useState<string>("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [tab, setTab] = useState<string>("reasoning");
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleQuery = async () => {
+    if (!apiKey) {
+      alert("Please provide an OpenAI API key");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          query,
+          openai_key: apiKey,
+          run_validation: true
+        }),
       });
       const data: ApiResponse = await res.json();
       setResult(data);
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+      }
     } catch (err) {
       console.error("Query failed:", err);
+      alert("Failed to process query. Check console for details.");
     } finally {
       setLoading(false);
     }
@@ -66,13 +81,25 @@ export default function KairosFrontend() {
     <div className="p-8 space-y-8">
       <h1 className="text-3xl font-bold tracking-tight">Kairos Reasoning Network</h1>
       <Card className="p-4 space-y-4">
-        <Label htmlFor="query">Query</Label>
-        <Textarea
-          id="query"
-          placeholder="Analyze the financial risks in the knowledge graph..."
-          value={query}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setQuery(e.target.value)}
-        />
+        <div className="space-y-2">
+          <Label htmlFor="apiKey">OpenAI API Key</Label>
+          <Input
+            id="apiKey"
+            type="password"
+            placeholder="sk-..."
+            value={apiKey}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApiKey(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="query">Query</Label>
+          <Textarea
+            id="query"
+            placeholder="Analyze the financial risks in the knowledge graph..."
+            value={query}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setQuery(e.target.value)}
+          />
+        </div>
         <div className="flex gap-4">
           <Button onClick={handleQuery} disabled={loading}>
             <Sparkles className="mr-2 h-4 w-4" /> Generate Reasoning

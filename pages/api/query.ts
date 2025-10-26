@@ -1,58 +1,106 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { spawn } from 'child_process';
+import path from 'path';
 
-// Mock response data
-const mockResponse = {
-  reasoning: {
-    module_used: "defi_risk",
-    conclusion: "The DeFi protocol shows moderate risk due to centralization concerns and limited audit history.",
-    reasoningPath: [
-      { 
-        step: "Liquidity Analysis", 
-        data: "Protocol has $25M TVL across 3 pools", 
-        inference: "Moderate liquidity, not enough to absorb large market movements" 
-      },
-      { 
-        step: "Smart Contract Risk", 
-        data: "One audit by CertiK completed in 2022", 
-        inference: "Limited audit history increases technical risk" 
-      },
-      { 
-        step: "Centralization Analysis", 
-        data: "3 admin keys with multisig (2/3)", 
-        inference: "Some centralization risk exists" 
-      }
-    ]
-  },
-  validation: {
-    logical: {
-      valid: true,
-      score: 0.92,
-      feedback: "Reasoning follows logical structure and conclusions are supported by evidence."
-    },
-    grounding: {
-      valid: true,
-      score: 0.85,
-      feedback: "All claims are grounded in verifiable data from the knowledge graph."
-    },
-    novelty: {
-      valid: true,
-      score: 0.78,
-      feedback: "Analysis provides some novel insights about centralization risks."
-    }
-  }
-};
+interface QueryRequest {
+  query: string;
+  openai_key?: string;
+  kg_path?: string;
+  run_validation?: boolean;
+  alignment_profile?: any;
+}
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'POST') {
-    // Simulate processing delay
-    setTimeout(() => {
-      res.status(200).json(mockResponse);
-    }, 1500);
-  } else {
+  if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+
+  try {
+    const { query, openai_key, kg_path, run_validation, alignment_profile }: QueryRequest = req.body;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+
+    // Default knowledge graph path
+    const kgPath = kg_path || path.join(process.cwd(), 'output', 'knowledge_graph.json');
+
+    // Prepare arguments for Python script
+    const scriptPath = path.join(process.cwd(), 'scripts', 'run_orchestrator.py');
+    const args = [
+      '--query', query,
+      '--kg-path', kgPath,
+    ];
+
+    if (openai_key) {
+      args.push('--openai-key', openai_key);
+    }
+
+    if (run_validation !== false) {
+      args.push('--run-validation');
+    }
+
+    if (alignment_profile) {
+      args.push('--alignment-profile', JSON.stringify(alignment_profile));
+    }
+
+    // Execute Python orchestrator
+    const python = spawn('python3', [scriptPath, ...args]);
+
+    let stdout = '';
+    let stderr = '';
+
+    python.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    python.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    python.on('close', (code) => {
+      if (code !== 0) {
+        console.error('Python orchestrator error:', stderr);
+        return res.status(500).json({
+          error: 'Reasoning process failed',
+          details: stderr
+        });
+      }
+
+      try {
+        const result = JSON.parse(stdout);
+
+        // Calculate trust score if validation was run
+        if (result.validation && Object.keys(result.validation).length > 0) {
+          const scores = Object.values(result.validation)
+            .filter((v: any) => v && typeof v.score === 'number')
+            .map((v: any) => v.score);
+
+          if (scores.length > 0) {
+            const trustScore = scores.reduce((a: number, b: number) => a + b, 0) / scores.length;
+            result.trust_score = parseFloat(trustScore.toFixed(2));
+          }
+        }
+
+        res.status(200).json(result);
+      } catch (parseError) {
+        console.error('Failed to parse orchestrator output:', stdout);
+        res.status(500).json({
+          error: 'Failed to parse reasoning results',
+          output: stdout
+        });
+      }
+    });
+
+  } catch (error: any) {
+    console.error('API error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message
+    });
   }
 }

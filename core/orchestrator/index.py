@@ -12,16 +12,16 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Registry of available reasoning modules
 RM_REGISTRY = {
-    "defi_risk": {
-        "description": "DeFi analysis of token behaviors, liquidity, and risks",
+    "financial_analysis": {
+        "description": "Financial analysis of market behaviors, liquidity, and risk assessment",
         "module": "reasoning_modules.defi_risk.index",
-        "function": "run_defi_risk_rm",
+        "function": "run_financial_analysis_rm",
         "requires_openai": True
     },
-    "audit": {
-        "description": "Smart contract audit history and vulnerability risk detection",
+    "security_audit": {
+        "description": "Security audit history and vulnerability risk detection",
         "module": "reasoning_modules.audit_rm",
-        "class": "AuditReasoningModule",
+        "class": "SecurityAuditReasoningModule",
         "requires_openai": False
     },
     "macro": {
