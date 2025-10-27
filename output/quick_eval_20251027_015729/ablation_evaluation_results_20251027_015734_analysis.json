@@ -1,0 +1,27 @@
+{
+  "baseline": "full_system",
+  "metric": "trust_score",
+  "n_samples": 15,
+  "baseline_mean": 0.755,
+  "baseline_std": 0.13732131246511903,
+  "baseline_ci": [
+    0.69,
+    0.825
+  ],
+  "comparisons": {
+    "no_validation": {
+      "mean": 0.0,
+      "std": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "n_samples": 15,
+      "improvement_pct": -100.0,
+      "ttest": {
+        "t_statistic": 21.293871824370676,
+        "p_value": 4.589683611434463e-12,
+        "cohens_d": 7.7754226232210035,
+        "ci_lower": 0.6789539918933866,
+        "ci_upper": 0.8310460081066134,
+        "significant": 

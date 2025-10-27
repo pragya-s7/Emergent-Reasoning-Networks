@@ -1,0 +1,106 @@
+ablation_condition,question_id,question,trust_score,logical_score,grounding_score,novelty_score,alignment_score,conclusion_length,reasoning_steps,hebbian_edges_strengthened,hebbian_emergent_edges
+full_system,sec_001,What are the security risks for the ApolloContract?,0.8,1.0,1.0,0.2,1.0,188,2,1,0
+full_system,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.675,1.0,1.0,0.2,0.5,188,2,1,0
+full_system,plasticity_005,What makes ApolloContract risky from a security perspective?,0.575,1.0,1.0,0.0,0.3,188,2,1,0
+full_system,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,0.95,1.0,1.0,0.8,1.0,0,0,1,0
+full_system,fin_004,What is the relationship between contract security and market liquidity?,0.95,1.0,1.0,0.8,1.0,0,0,1,0
+full_system,confidence_001,How confident can we be about ApolloContract's security status?,0.625,1.0,1.0,0.3,0.2,188,2,1,0
+full_system,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.8,0.9,1.0,0.8,0.5,188,2,1,0
+full_system,extraction_001,Extract all security-related entities from the knowledge base,0.75,1.0,1.0,0.5,0.5,188,2,1,0
+full_system,fin_003,How do security vulnerabilities impact financial risk assessment?,0.95,1.0,1.0,0.8,1.0,0,0,1,0
+full_system,edge_002,How do we handle contradictory information about contract security?,0.625,1.0,1.0,0.0,0.5,188,2,1,0
+full_system,comparison_001,Compare the security posture of audited vs unaudited contracts,0.625,1.0,1.0,0.0,0.5,188,2,1,0
+full_system,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.675,1.0,1.0,0.2,0.5,188,2,1,0
+full_system,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,0.95,1.0,1.0,0.8,1.0,0,0,1,0
+full_system,sec_004,What if the ApolloContract had a GasLimitVulnerability?,0.65,1.0,1.0,0.1,0.5,188,2,1,0
+full_system,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.725,1.0,1.0,0.7,0.2,188,2,1,0
+no_validation,sec_001,What are the security risks for the ApolloContract?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,plasticity_005,What makes ApolloContract risky from a security perspective?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,0.0,0.0,0.0,0.0,0.0,0,0,1,0
+no_validation,fin_004,What is the relationship between contract security and market liquidity?,0.0,0.0,0.0,0.0,0.0,0,0,1,0
+no_validation,confidence_001,How confident can we be about ApolloContract's security status?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,extraction_001,Extract all security-related entities from the knowledge base,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,fin_003,How do security vulnerabilities impact financial risk assessment?,0.0,0.0,0.0,0.0,0.0,0,0,1,0
+no_validation,edge_002,How do we handle contradictory information about contract security?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,comparison_001,Compare the security posture of audited vs unaudited contracts,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,0.0,0.0,0.0,0.0,0.0,0,0,1,0
+no_validation,sec_004,What if the ApolloContract had a GasLimitVulnerability?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_validation,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.0,0.0,0.0,0.0,0.0,188,2,1,0
+no_hebbian,sec_001,What are the security risks for the ApolloContract?,0.625,1.0,1.0,0.0,0.5,188,2,0,0
+no_hebbian,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.55,1.0,1.0,0.0,0.2,188,2,0,0
+no_hebbian,plasticity_005,What makes ApolloContract risky from a security perspective?,0.75,1.0,1.0,0.0,1.0,188,2,0,0
+no_hebbian,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,0.95,1.0,1.0,0.8,1.0,0,0,0,0
+no_hebbian,fin_004,What is the relationship between contract security and market liquidity?,0.95,1.0,1.0,0.8,1.0,0,0,0,0
+no_hebbian,confidence_001,How confident can we be about ApolloContract's security status?,0.675,1.0,1.0,0.2,0.5,188,2,0,0
+no_hebbian,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.675,1.0,1.0,0.2,0.5,188,2,0,0
+no_hebbian,extraction_001,Extract all security-related entities from the knowledge base,0.625,1.0,1.0,0.0,0.5,188,2,0,0
+no_hebbian,fin_003,How do security vulnerabilities impact financial risk assessment?,0.95,1.0,1.0,0.8,1.0,0,0,0,0
+no_hebbian,edge_002,How do we handle contradictory information about contract security?,0.75,1.0,1.0,0.5,0.5,188,2,0,0
+no_hebbian,comparison_001,Compare the security posture of audited vs unaudited contracts,0.75,1.0,1.0,0.2,0.8,188,2,0,0
+no_hebbian,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.75,1.0,1.0,0.5,0.5,188,2,0,0
+no_hebbian,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,0.95,1.0,1.0,0.8,1.0,0,0,0,0
+no_hebbian,sec_004,What if the ApolloContract had a GasLimitVulnerability?,0.7,1.0,1.0,0.3,0.5,188,2,0,0
+no_hebbian,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.575,1.0,1.0,0.0,0.3,188,2,0,0
+no_logical_vn,sec_001,What are the security risks for the ApolloContract?,0.5,0.0,1.0,0.2,0.3,188,2,1,0
+no_logical_vn,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.9,0.0,1.0,0.7,1.0,188,2,1,0
+no_logical_vn,plasticity_005,What makes ApolloContract risky from a security perspective?,0.4,0.0,1.0,0.2,0.0,188,2,1,0
+no_logical_vn,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,0.933,0.0,1.0,0.8,1.0,0,0,1,0
+no_logical_vn,fin_004,What is the relationship between contract security and market liquidity?,0.933,0.0,1.0,0.8,1.0,0,0,1,0
+no_logical_vn,confidence_001,How confident can we be about ApolloContract's security status?,0.733,0.0,1.0,0.2,1.0,188,2,1,0
+no_logical_vn,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.767,0.0,1.0,0.8,0.5,188,2,1,0
+no_logical_vn,extraction_001,Extract all security-related entities from the knowledge base,0.567,0.0,1.0,0.2,0.5,188,2,1,0
+no_logical_vn,fin_003,How do security vulnerabilities impact financial risk assessment?,0.933,0.0,1.0,0.8,1.0,0,0,1,0
+no_logical_vn,edge_002,How do we handle contradictory information about contract security?,0.667,0.0,1.0,0.0,1.0,188,2,1,0
+no_logical_vn,comparison_001,Compare the security posture of audited vs unaudited contracts,0.5,0.0,1.0,0.0,0.5,188,2,1,0
+no_logical_vn,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.733,0.0,1.0,0.7,0.5,188,2,1,0
+no_logical_vn,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,0.933,0.0,1.0,0.8,1.0,0,0,1,0
+no_logical_vn,sec_004,What if the ApolloContract had a GasLimitVulnerability?,0.433,0.0,1.0,0.0,0.3,188,2,1,0
+no_logical_vn,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.667,0.0,1.0,0.5,0.5,188,2,1,0
+no_grounding_vn,sec_001,What are the security risks for the ApolloContract?,0.5,1.0,0.0,0.0,0.5,188,2,1,0
+no_grounding_vn,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.4,1.0,0.0,0.0,0.2,188,2,1,0
+no_grounding_vn,plasticity_005,What makes ApolloContract risky from a security perspective?,0.5,1.0,0.0,0.0,0.5,188,2,1,0
+no_grounding_vn,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,0.933,1.0,0.0,0.8,1.0,0,0,1,0
+no_grounding_vn,fin_004,What is the relationship between contract security and market liquidity?,0.933,1.0,0.0,0.8,1.0,0,0,1,0
+no_grounding_vn,confidence_001,How confident can we be about ApolloContract's security status?,0.6,1.0,0.0,0.3,0.5,188,2,1,0
+no_grounding_vn,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.5,1.0,0.0,0.3,0.2,188,2,1,0
+no_grounding_vn,extraction_001,Extract all security-related entities from the knowledge base,0.5,1.0,0.0,0.0,0.5,188,2,1,0
+no_grounding_vn,fin_003,How do security vulnerabilities impact financial risk assessment?,0.933,1.0,0.0,0.8,1.0,0,0,1,0
+no_grounding_vn,edge_002,How do we handle contradictory information about contract security?,0.567,1.0,0.0,0.2,0.5,188,2,1,0
+no_grounding_vn,comparison_001,Compare the security posture of audited vs unaudited contracts,0.5,1.0,0.0,0.0,0.5,188,2,1,0
+no_grounding_vn,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.933,1.0,0.0,0.8,1.0,188,2,1,0
+no_grounding_vn,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,0.933,1.0,0.0,0.8,1.0,0,0,1,0
+no_grounding_vn,sec_004,What if the ApolloContract had a GasLimitVulnerability?,0.7,1.0,0.0,0.8,0.3,188,2,1,0
+no_grounding_vn,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.333,0.5,0.0,0.3,0.2,188,2,1,0
+no_novelty_vn,sec_001,What are the security risks for the ApolloContract?,0.833,1.0,1.0,0.0,0.5,188,2,1,0
+no_novelty_vn,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.833,1.0,1.0,0.0,0.5,188,2,1,0
+no_novelty_vn,plasticity_005,What makes ApolloContract risky from a security perspective?,1.0,1.0,1.0,0.0,1.0,188,2,1,0
+no_novelty_vn,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,1.0,1.0,1.0,0.0,1.0,0,0,1,0
+no_novelty_vn,fin_004,What is the relationship between contract security and market liquidity?,1.0,1.0,1.0,0.0,1.0,0,0,1,0
+no_novelty_vn,confidence_001,How confident can we be about ApolloContract's security status?,0.833,0.5,1.0,0.0,1.0,188,2,1,0
+no_novelty_vn,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.767,1.0,1.0,0.0,0.3,188,2,1,0
+no_novelty_vn,extraction_001,Extract all security-related entities from the knowledge base,1.0,1.0,1.0,0.0,1.0,188,2,1,0
+no_novelty_vn,fin_003,How do security vulnerabilities impact financial risk assessment?,1.0,1.0,1.0,0.0,1.0,0,0,1,0
+no_novelty_vn,edge_002,How do we handle contradictory information about contract security?,1.0,1.0,1.0,0.0,1.0,188,2,1,0
+no_novelty_vn,comparison_001,Compare the security posture of audited vs unaudited contracts,0.833,1.0,1.0,0.0,0.5,188,2,1,0
+no_novelty_vn,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.833,1.0,1.0,0.0,0.5,188,2,1,0
+no_novelty_vn,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,1.0,1.0,1.0,0.0,1.0,0,0,1,0
+no_novelty_vn,sec_004,What if the ApolloContract had a GasLimitVulnerability?,1.0,1.0,1.0,0.0,1.0,188,2,1,0
+no_novelty_vn,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.833,1.0,1.0,0.0,0.5,188,2,1,0
+no_alignment_vn,sec_001,What are the security risks for the ApolloContract?,0.933,1.0,1.0,0.8,0.0,188,2,1,0
+no_alignment_vn,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.767,1.0,1.0,0.3,0.0,188,2,1,0
+no_alignment_vn,plasticity_005,What makes ApolloContract risky from a security perspective?,0.667,1.0,1.0,0.0,0.0,188,2,1,0
+no_alignment_vn,synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,0.933,1.0,1.0,0.8,0.0,0,0,1,0
+no_alignment_vn,fin_004,What is the relationship between contract security and market liquidity?,0.933,1.0,1.0,0.8,0.0,0,0,1,0
+no_alignment_vn,confidence_001,How confident can we be about ApolloContract's security status?,0.667,1.0,1.0,0.0,0.0,188,2,1,0
+no_alignment_vn,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.767,1.0,1.0,0.3,0.0,188,2,1,0
+no_alignment_vn,extraction_001,Extract all security-related entities from the knowledge base,0.667,1.0,1.0,0.0,0.0,188,2,1,0
+no_alignment_vn,fin_003,How do security vulnerabilities impact financial risk assessment?,0.933,1.0,1.0,0.8,0.0,0,0,1,0
+no_alignment_vn,edge_002,How do we handle contradictory information about contract security?,0.733,1.0,1.0,0.2,0.0,188,2,1,0
+no_alignment_vn,comparison_001,Compare the security posture of audited vs unaudited contracts,0.833,1.0,1.0,0.5,0.0,188,2,1,0
+no_alignment_vn,aggregation_001,What is the total count of security vulnerabilities across all contracts?,0.767,1.0,1.0,0.3,0.0,188,2,1,0
+no_alignment_vn,alignment_002,What is a moderate-risk assessment of investing in vulnerable contracts?,0.933,1.0,1.0,0.8,0.0,0,0,1,0
+no_alignment_vn,sec_004,What if the ApolloContract had a GasLimitVulnerability?,0.767,1.0,1.0,0.3,0.0,188,2,1,0
+no_alignment_vn,meta_001,What can we infer about the overall security maturity of the system based on available data?,0.667,1.0,1.0,0.0,0.0,188,2,1,0
