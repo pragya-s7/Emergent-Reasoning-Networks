@@ -1,0 +1,52 @@
+{
+  "rules": [
+    {
+      "name": "Un-audited Smart Contract",
+      "description": "Flags smart contracts that have never been audited.",
+      "conditions": {
+        "all": [
+          {
+            "fact": ["entity", "type", "==", "SmartContract"]
+          },
+          {
+            "fact": ["relation", "predicate", "!=", "has_audit"]
+          }
+        ]
+      },
+      "risk": "High",
+      "inference": "A smart contract with no audit history poses a significant security risk."
+    },
+    {
+      "name": "Outdated Audit",
+      "description": "Flags smart contracts with an audit older than 365 days.",
+      "conditions": {
+        "all": [
+          {
+            "fact": ["entity", "type", "==", "SmartContract"]
+          },
+          {
+            "fact": ["relation", "predicate", "==", "has_audit"],
+            "value": {
+              "fact": ["relation", "metadata.audit_date", "age_days", ">", 365]
+            }
+          }
+        ]
+      },
+      "risk": "Medium",
+      "inference": "An audit older than one year may not cover recent changes or new vulnerability classes."
+    },
+    {
+      "name": "Contract with Known Vulnerabilities",
+      "description": "Flags contracts that have a known vulnerability.",
+      "conditions": {
+        "any": [
+          {
+            "fact": ["relation", "predicate", "==", "has_vulnerability"]
+          }
+        ]
+      },
+      "risk": "Critical",
+      "inference": "The contract is associated with a known vulnerability that could be exploited."
+    }
+  ]
+}

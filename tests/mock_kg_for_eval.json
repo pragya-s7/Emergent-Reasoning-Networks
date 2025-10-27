@@ -1,0 +1,35 @@
+{
+  "entities": [
+    {
+      "id": "apollo-contract",
+      "label": "ApolloContract",
+      "type": "SmartContract",
+      "properties": {}
+    },
+    {
+      "id": "reentrancy-vuln",
+      "label": "Reentrancy",
+      "type": "Vulnerability",
+      "properties": {}
+    },
+    {
+      "id": "chain-guard-audit",
+      "label": "ChainGuard Audit",
+      "type": "Audit",
+      "properties": {}
+    }
+  ],
+  "relations": [
+    {
+      "subject_id": "apollo-contract",
+      "predicate": "has_vulnerability",
+      "object_id": "reentrancy-vuln",
+      "confidence": 0.9,
+      "source": "manual_entry",
+      "created_at": "2024-01-01T00:00:00",
+      "metadata": {},
+      "activation_count": 0,
+      "last_activated": null
+    }
+  ]
+}

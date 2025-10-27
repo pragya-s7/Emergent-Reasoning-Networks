@@ -1,0 +1,28 @@
+{
+  "announcements": [
+    {
+      "id": "ann_001",
+      "project": "Project Phoenix",
+      "date": "2024-05-15",
+      "title": "Project Phoenix Mainnet Launch Successful",
+      "content": "We are thrilled to announce the successful launch of the Project Phoenix mainnet. This marks a major milestone in our journey to revolutionize decentralized finance. The launch was smooth and we are seeing stable network performance.",
+      "sentiment": "positive"
+    },
+    {
+      "id": "ann_002",
+      "project": "Project Phoenix",
+      "date": "2024-06-01",
+      "title": "Security Update and Partnership with ChainGuard",
+      "content": "To further bolster our security, we have partnered with ChainGuard, a leading blockchain security firm. They have completed an initial audit and we will be implementing their recommendations over the coming weeks.",
+      "sentiment": "neutral"
+    },
+    {
+      "id": "ann_003",
+      "project": "Project Titan",
+      "date": "2024-06-10",
+      "title": "Temporary Suspension of Services",
+      "content": "We have identified a critical vulnerability in a third-party dependency. To protect our users, we are temporarily suspending all services while we work on a fix. We apologize for the inconvenience and will provide updates as soon as possible.",
+      "sentiment": "negative"
+    }
+  ]
+}

@@ -1,62 +1,95 @@
 from reasoning_modules.base.module import ReasoningModule
 import datetime
+import pandas as pd
+import os
 
 class MacroReasoningModule(ReasoningModule):
-    def __init__(self):
+    def __init__(self, data_path='reasoning_modules/data/macro_data.csv'):
         super().__init__('macro')
+        self.data_path = data_path
         self.sources = {
-            "fed_data": "Federal Reserve Economic Data",
-            "market_indices": "Major Market Indices",
-            "inflation_reports": "Bureau of Labor Statistics"
+            "local_data_file": "Local Macroeconomic Data CSV",
         }
 
     def run(self, subquery, knowledgeGraph):
-        # Query relevant macro data from the knowledge graph
-        macro_facts = knowledgeGraph.query(subject_type="EconomicIndicator")
-        market_data = knowledgeGraph.query(subject_type="MarketIndicator")
-        
-        # Structured reasoning process
-        reasoning_steps = [
-            {
-                "step": "Analyze interest rate trends",
-                "data": "Federal funds rate increased by 25 basis points",
-                "source": self.sources["fed_data"],
-                "inference": "Monetary policy is tightening"
-            },
-            {
-                "step": "Evaluate market volatility",
-                "data": "VIX index above 20 for past 30 days",
-                "source": self.sources["market_indices"],
-                "inference": "Market uncertainty is elevated"
-            },
-            {
-                "step": "Assess inflation indicators",
-                "data": "CPI at 3.2%, above Fed target of 2%",
-                "source": self.sources["inflation_reports"],
-                "inference": "Inflation remains a concern for policymakers"
-            }
-        ]
-        
-        # Generate conclusion based on reasoning steps
-        conclusion = self._synthesize_conclusion(reasoning_steps)
-        
-        # Return structured output with reasoning path and sources
+        """Analyzes macroeconomic data from a local CSV file."""
+        if not os.path.exists(self.data_path):
+            return self._error_response("Data file not found.")
+
+        try:
+            df = pd.read_csv(self.data_path)
+            df['Date'] = pd.to_datetime(df['Date'])
+            df = df.sort_values(by='Date', ascending=False)
+        except Exception as e:
+            return self._error_response(f"Failed to parse data file: {e}")
+
+        if len(df) < 2:
+            return self._error_response("Insufficient data for trend analysis.")
+
+        # Get the two most recent data points
+        latest = df.iloc[0]
+        previous = df.iloc[1]
+
+        # Perform simple trend analysis
+        reasoning_steps = []
+        interest_rate_trend = latest['InterestRate'] - previous['InterestRate']
+        inflation_trend = latest['InflationRate'] - previous['InflationRate']
+
+        # Step 1: Analyze Interest Rates
+        if interest_rate_trend > 0:
+            ir_inference = "Monetary policy is tightening."
+        elif interest_rate_trend < 0:
+            ir_inference = "Monetary policy is loosening."
+        else:
+            ir_inference = "Monetary policy is holding steady."
+        reasoning_steps.append({
+            "step": "Analyze interest rate trends",
+            "data": f"Latest interest rate is {latest['InterestRate']:.2f}%, change of {interest_rate_trend:.2f} from previous quarter.",
+            "source": self.sources["local_data_file"],
+            "inference": ir_inference
+        })
+
+        # Step 2: Analyze Inflation
+        if inflation_trend > 0:
+            inf_inference = "Inflationary pressures are increasing."
+        elif inflation_trend < 0:
+            inf_inference = "Inflationary pressures are decreasing."
+        else:
+            inf_inference = "Inflation is stable."
+        reasoning_steps.append({
+            "step": "Assess inflation indicators",
+            "data": f"Latest inflation rate is {latest['InflationRate']:.2f}%, change of {inflation_trend:.2f} from previous quarter.",
+            "source": self.sources["local_data_file"],
+            "inference": inf_inference
+        })
+
+        conclusion = self._synthesize_conclusion(ir_inference, inf_inference)
+
         return {
             "subquery": subquery,
             "timestamp": datetime.datetime.now().isoformat(),
             "reasoningPath": reasoning_steps,
             "sources": self.sources,
             "conclusion": conclusion,
-            "confidence": 0.85,
+            "confidence": 0.90,
             "relevantMetrics": {
-                "interest_rate": "4.75%",
-                "inflation": "3.2%",
-                "market_volatility": "high"
+                "latest_interest_rate": latest['InterestRate'],
+                "interest_rate_trend": interest_rate_trend,
+                "latest_inflation_rate": latest['InflationRate'],
+                "inflation_trend": inflation_trend
             }
         }
-    
-    def _synthesize_conclusion(self, reasoning_steps):
-        """Generate a conclusion based on reasoning steps"""
-        # In a real implementation, this would use more sophisticated logic
-        # or potentially call an LLM to synthesize the conclusion
-        return "Macro conditions suggest caution in investment strategy due to tightening monetary policy, elevated market uncertainty, and persistent inflation concerns."
+
+    def _synthesize_conclusion(self, ir_inference, inf_inference):
+        return f"Macroeconomic analysis suggests: {ir_inference} {inf_inference}"
+
+    def _error_response(self, error_message):
+        return {
+            "subquery": "",
+            "timestamp": datetime.datetime.now().isoformat(),
+            "reasoningPath": [],
+            "sources": self.sources,
+            "conclusion": f"Error in MacroReasoningModule: {error_message}",
+            "confidence": 0.0,
+            "relevantMetrics": {}
+        }

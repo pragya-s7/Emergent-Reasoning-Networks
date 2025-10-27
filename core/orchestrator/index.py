@@ -13,27 +13,27 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 # Registry of available reasoning modules
 RM_REGISTRY = {
     "financial_analysis": {
-        "description": "Financial analysis of market behaviors, liquidity, and risk assessment",
+        "description": "Performs dynamic financial analysis of market behaviors, liquidity, and risk assessment using an LLM.",
         "module": "reasoning_modules.defi_risk.index",
         "function": "run_financial_analysis_rm",
         "requires_openai": True
     },
     "security_audit": {
-        "description": "Security audit history and vulnerability risk detection",
+        "description": "Analyzes entities in the knowledge graph against a predefined set of security rules to flag potential risks.",
         "module": "reasoning_modules.audit_rm",
         "class": "SecurityAuditReasoningModule",
         "requires_openai": False
     },
-    "macro": {
-        "description": "Macroeconomic trends and global financial indicators",
+    "macro_analysis": {
+        "description": "Analyzes local macroeconomic data from a CSV file to identify trends in interest rates and inflation.",
         "module": "reasoning_modules.macro_rm",
         "class": "MacroReasoningModule",
         "requires_openai": False
     },
-    "sentiment": {
-        "description": "Community and market sentiment analysis from social platforms",
-        "module": "reasoning_modules.sentiment_rm",
-        "class": "SentimentReasoningModule",
+    "corporate_communications": {
+        "description": "Analyzes official company announcements from a local JSON file to gauge sentiment and key messages.",
+        "module": "reasoning_modules.corporate_communications_rm",
+        "class": "CorporateCommunicationsReasoningModule",
         "requires_openai": False
     }
 }
