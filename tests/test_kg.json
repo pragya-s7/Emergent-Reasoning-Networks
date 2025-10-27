@@ -1,0 +1,68 @@
+{
+  "entities": [
+    {
+      "id": "bf95674c-1f43-4622-9970-682929b9212a",
+      "label": "Alice",
+      "type": "Person",
+      "properties": {}
+    },
+    {
+      "id": "68fd2b55-fc40-4057-9c07-37a1053a7cec",
+      "label": "Bob",
+      "type": "Person",
+      "properties": {}
+    },
+    {
+      "id": "3bbb71d4-c3fe-4ef8-a0f0-340a4380bf4e",
+      "label": "TechCorp",
+      "type": "Company",
+      "properties": {}
+    }
+  ],
+  "relations": [
+    {
+      "subject_id": "bf95674c-1f43-4622-9970-682929b9212a",
+      "predicate": "knows",
+      "object_id": "68fd2b55-fc40-4057-9c07-37a1053a7cec",
+      "confidence": 1.0,
+      "created_at": "2025-10-27T01:02:27.618286",
+      "source": null,
+      "version": null,
+      "metadata": {},
+      "activation_count": 0,
+      "last_activated": null
+    },
+    {
+      "subject_id": "bf95674c-1f43-4622-9970-682929b9212a",
+      "predicate": "works_at",
+      "object_id": "3bbb71d4-c3fe-4ef8-a0f0-340a4380bf4e",
+      "confidence": 1.0,
+      "created_at": "2025-10-27T01:02:27.618847",
+      "source": null,
+      "version": null,
+      "metadata": {},
+      "activation_count": 0,
+      "last_activated": null
+    },
+    {
+      "subject_id": "68fd2b55-fc40-4057-9c07-37a1053a7cec",
+      "predicate": "works_at",
+      "object_id": "3bbb71d4-c3fe-4ef8-a0f0-340a4380bf4e",
+      "confidence": 1.0,
+      "created_at": "2025-10-27T01:02:27.618853",
+      "source": null,
+      "version": null,
+      "metadata": {},
+      "activation_count": 0,
+      "last_activated": null
+    }
+  ],
+  "hebbian_config": {
+    "learning_rate": 0.1,
+    "decay_rate": 0.05,
+    "emergence_threshold": 3,
+    "min_strength": 0.1,
+    "max_strength": 1.0
+  },
+  "coactivation_counts": {}
+}

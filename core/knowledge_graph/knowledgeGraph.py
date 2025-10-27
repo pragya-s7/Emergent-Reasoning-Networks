@@ -254,7 +254,7 @@ class KnowledgeGraph:
             if days_inactive > 0:
                 decay = decay_rate * (1 - math.exp(-days_inactive / 30))  # 30-day half-life
                 old_strength = rel.confidence
-                rel.confidence = max(min_strength, rel.confidence - decay)
+                rel.confidence = rel.confidence - decay  # Don't floor here, let pruning handle it
 
                 if rel.confidence > min_strength:
                     decayed.append((
