@@ -9,10 +9,11 @@ import argparse
 import json
 import os
 import sys
-import csv
 import time
-import numpy as np
 from datetime import datetime
+
+import numpy as np
+import pandas as pd
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -74,6 +75,14 @@ def main():
     output_path = os.path.join(args.output_dir, output_filename)
     os.makedirs(args.output_dir, exist_ok=True)
 
+    def persist_results(rows):
+        """Persist accumulated rows atomically and return the DataFrame."""
+        df = pd.DataFrame(rows, columns=fieldnames)
+        tmp_path = f"{output_path}.tmp"
+        df.to_csv(tmp_path, index=False)
+        os.replace(tmp_path, output_path)
+        return df
+
     # Initialize baselines
     baselines = {
         "kairos_full": None,  # Full Kairos system
@@ -83,114 +92,114 @@ def main():
         "no_hebbian": NoHebbianBaseline()
     }
 
-    with open(output_path, 'w', newline='') as csvfile:
-        fieldnames = [
-            'question_id', 'question', 'baseline_type',
-            'trust_score', 'latency', 'conclusion_length',
-            'reasoning_steps', 'has_conclusion'
-        ]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
+    fieldnames = [
+        'question_id', 'question', 'baseline_type',
+        'trust_score', 'latency', 'conclusion_length',
+        'reasoning_steps', 'has_conclusion'
+    ]
+    results_rows = []
+    df = persist_results(results_rows)
 
-        total_runs = len(test_questions) * len(baselines)
-        current_run = 0
+    total_runs = len(test_questions) * len(baselines)
+    current_run = 0
 
-        for idx, item in enumerate(test_questions):
-            question = item.get('question', item.get('query', ''))
-            question_id = item.get('id', f'q_{idx}')
+    for idx, item in enumerate(test_questions):
+        question = item.get('question', item.get('query', ''))
+        question_id = item.get('id', f'q_{idx}')
 
-            print(f"\n{'='*80}")
-            print(f"Question {idx+1}/{len(test_questions)}: {question[:60]}...")
-            print(f"{'='*80}")
+        print(f"\n{'='*80}")
+        print(f"Question {idx+1}/{len(test_questions)}: {question[:60]}...")
+        print(f"{'='*80}")
 
-            for baseline_name, baseline_obj in baselines.items():
-                current_run += 1
-                print(f"\n  [{current_run}/{total_runs}] Testing: {baseline_name}")
+        for baseline_name, baseline_obj in baselines.items():
+            current_run += 1
+            print(f"\n  [{current_run}/{total_runs}] Testing: {baseline_name}")
 
-                # Create fresh KG copy for each run
-                kg_copy = KnowledgeGraph()
-                kg_copy.load_from_json(args.kg_path)
+            # Create fresh KG copy for each run
+            kg_copy = KnowledgeGraph()
+            kg_copy.load_from_json(args.kg_path)
 
-                start_time = time.time()
+            start_time = time.time()
 
-                try:
-                    if baseline_name == "kairos_full":
-                        # Full Kairos system
-                        result = orchestrate(question, kg_copy, args.anthropic_key, run_validation=True)
-                        reasoning = result.get("reasoning", {})
-                        validation = result.get("validation", {})
+            try:
+                if baseline_name == "kairos_full":
+                    # Full Kairos system
+                    result = orchestrate(question, kg_copy, args.anthropic_key, run_validation=True)
+                    reasoning = result.get("reasoning", {})
 
-                        trust_score = result.get("trust_score", 0.0)
-                        conclusion = reasoning.get("conclusion", "")
-                        reasoning_steps = len(reasoning.get("reasoningPath", []))
+                    trust_score = result.get("trust_score", 0.0)
+                    conclusion = reasoning.get("conclusion", "")
+                    reasoning_steps = len(reasoning.get("reasoningPath", []))
 
-                    elif baseline_name == "naive_kg":
-                        # Naive KG query (no API call needed)
-                        result = baseline_obj.run(question, kg_copy)
+                elif baseline_name == "naive_kg":
+                    # Naive KG query (no API call needed)
+                    result = baseline_obj.run(question, kg_copy)
 
-                        trust_score = 0.0  # No validation for naive baseline
-                        conclusion = result.get("conclusion", "")
-                        reasoning_steps = len(result.get("reasoningPath", []))
+                    trust_score = 0.0  # No validation for naive baseline
+                    conclusion = result.get("conclusion", "")
+                    reasoning_steps = len(result.get("reasoningPath", []))
 
-                    elif baseline_name == "single_agent":
-                        # Single agent LLM
-                        result = baseline_obj.run(question, kg_copy, args.anthropic_key)
+                elif baseline_name == "single_agent":
+                    # Single agent LLM
+                    result = baseline_obj.run(question, kg_copy, args.anthropic_key)
 
-                        trust_score = 0.0  # No validation for single agent
-                        conclusion = result.get("conclusion", "")
-                        reasoning_steps = len(result.get("reasoningPath", []))
+                    trust_score = 0.0  # No validation for single agent
+                    conclusion = result.get("conclusion", "")
+                    reasoning_steps = len(result.get("reasoningPath", []))
 
-                    elif baseline_name == "no_validation":
-                        # No validation baseline
-                        result = baseline_obj.run(question, kg_copy, args.anthropic_key)
-                        reasoning = result.get("reasoning", {})
+                elif baseline_name == "no_validation":
+                    # No validation baseline
+                    result = baseline_obj.run(question, kg_copy, args.anthropic_key)
+                    reasoning = result.get("reasoning", {})
 
-                        trust_score = 0.0  # No validation
-                        conclusion = reasoning.get("conclusion", "")
-                        reasoning_steps = len(reasoning.get("reasoningPath", []))
+                    trust_score = 0.0  # No validation
+                    conclusion = reasoning.get("conclusion", "")
+                    reasoning_steps = len(reasoning.get("reasoningPath", []))
 
-                    elif baseline_name == "no_hebbian":
-                        # No Hebbian baseline
-                        result = baseline_obj.run(question, kg_copy, args.anthropic_key)
+                elif baseline_name == "no_hebbian":
+                    # No Hebbian baseline
+                    result = baseline_obj.run(question, kg_copy, args.anthropic_key)
 
-                        trust_score = result.get("trust_score", 0.0)
-                        reasoning = result.get("reasoning", {})
-                        conclusion = reasoning.get("conclusion", "")
-                        reasoning_steps = len(reasoning.get("reasoningPath", []))
+                    trust_score = result.get("trust_score", 0.0)
+                    reasoning = result.get("reasoning", {})
+                    conclusion = reasoning.get("conclusion", "")
+                    reasoning_steps = len(reasoning.get("reasoningPath", []))
 
-                    latency = time.time() - start_time
+                latency = time.time() - start_time
 
-                    writer.writerow({
-                        'question_id': question_id,
-                        'question': question,
-                        'baseline_type': baseline_name,
-                        'trust_score': trust_score,
-                        'latency': latency,
-                        'conclusion_length': len(conclusion),
-                        'reasoning_steps': reasoning_steps,
-                        'has_conclusion': bool(conclusion)
-                    })
+                results_rows.append({
+                    'question_id': question_id,
+                    'question': question,
+                    'baseline_type': baseline_name,
+                    'trust_score': trust_score,
+                    'latency': latency,
+                    'conclusion_length': len(conclusion),
+                    'reasoning_steps': reasoning_steps,
+                    'has_conclusion': bool(conclusion)
+                })
+                df = persist_results(results_rows)
 
-                    if baseline_name in ["naive_kg", "single_agent", "no_validation"] and trust_score == 0.0:
-                        print("      (NOTE: Trust score is 0.0 by design for this baseline as it does not use the validation framework.)")
-                    print(f"    Trust: {trust_score:.3f}, Latency: {latency:.2f}s, Steps: {reasoning_steps}")
+                if baseline_name in ["naive_kg", "single_agent", "no_validation"] and trust_score == 0.0:
+                    print("      (NOTE: Trust score is 0.0 by design for this baseline as it does not use the validation framework.)")
+                print(f"    Trust: {trust_score:.3f}, Latency: {latency:.2f}s, Steps: {reasoning_steps}")
 
-                except Exception as e:
-                    print(f"    ERROR: {str(e)}")
-                    import traceback
-                    traceback.print_exc()
+            except Exception as e:
+                print(f"    ERROR: {str(e)}")
+                import traceback
+                traceback.print_exc()
 
-                    latency = time.time() - start_time
-                    writer.writerow({
-                        'question_id': question_id,
-                        'question': question,
-                        'baseline_type': baseline_name,
-                        'trust_score': 0.0,
-                        'latency': latency,
-                        'conclusion_length': 0,
-                        'reasoning_steps': 0,
-                        'has_conclusion': False
-                    })
+                latency = time.time() - start_time
+                results_rows.append({
+                    'question_id': question_id,
+                    'question': question,
+                    'baseline_type': baseline_name,
+                    'trust_score': 0.0,
+                    'latency': latency,
+                    'conclusion_length': 0,
+                    'reasoning_steps': 0,
+                    'has_conclusion': False
+                })
+                df = persist_results(results_rows)
 
     print(f"\n{'='*80}")
     print(f"Baseline comparison complete! Results saved to {output_path}")
@@ -198,8 +207,10 @@ def main():
 
     # Quick analysis
     print("\nRunning statistical analysis...")
-    import pandas as pd
-    df = pd.read_csv(output_path)
+
+    if df.empty:
+        print("No baseline rows were recorded; skipping statistical analysis.")
+        return
 
     print("\n" + "="*80)
     print("BASELINE COMPARISON ANALYSIS")
