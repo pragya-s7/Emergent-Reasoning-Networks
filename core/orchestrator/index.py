@@ -229,9 +229,35 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
             rm_result["module_used"] = selected_rm_name
         
         validation_results = {}
-        if run_validation and openai_key:
-            # ... (validation logic remains the same)
-            pass
+        if run_validation:
+            for vn_name, vn_info in VN_REGISTRY.items():
+                # Check if the VN can be run with the provided arguments
+                can_run = True
+                if vn_info.get("requires_openai", False) and not openai_key:
+                    can_run = False
+                
+                if can_run:
+                    try:
+                        print(f"[Kairos Orchestrator] Running validation node: {vn_name}")
+                        vn_module = importlib.import_module(vn_info["module"])
+                        vn_function = getattr(vn_module, vn_info["function"])
+                        
+                        vn_args = [rm_result]
+                        if vn_info.get("requires_kg", False):
+                            vn_args.append(knowledge_graph)
+                        if vn_info.get("requires_openai", False):
+                            vn_args.append(openai_key)
+                        
+                        if vn_name == "alignment" and alignment_profile:
+                            vn_args.append(alignment_profile)
+                        
+                        vn_result = vn_function(*vn_args)
+                        validation_results[vn_name] = vn_result
+                    except Exception as e:
+                        print(f"[Kairos Orchestrator] Error in validation node {vn_name}: {str(e)}")
+                        validation_results[vn_name] = {"valid": False, "score": 0.0, "feedback": f"Error: {str(e)}"}
+
+
 
         hebbian_stats = apply_hebbian_learning(knowledge_graph, rm_result, validation_results)
 

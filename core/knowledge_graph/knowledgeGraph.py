@@ -202,16 +202,21 @@ class KnowledgeGraph:
                         break
 
                 if not existing:
-                    # Create emergent connection
                     e1 = self.entities[e1_id]
                     e2 = self.entities[e2_id]
 
-                    # Initial strength based on co-activation frequency
+                    # Infer predicate
+                    predicate = "co_occurs_with"
+                    if e1.type == "EconomicIndicator" and e2.type == "EconomicIndicator":
+                        # A more sophisticated implementation would analyze the actual values
+                        # over time. For now, we'll just use a placeholder.
+                        predicate = "correlates_with"
+
                     initial_strength = min(0.5, count * 0.1)
 
                     new_rel = Relation(
                         subject_id=e1_id,
-                        predicate="co_occurs_with",  # Emergent relation type
+                        predicate=predicate,  # Use inferred predicate
                         object_id=e2_id,
                         confidence=initial_strength,
                         source="hebbian_emergence",
@@ -220,10 +225,9 @@ class KnowledgeGraph:
                     self.relations.append(new_rel)
                     new_edges.append((e1.label, e2.label, initial_strength))
 
-                    print(f"[Hebbian] Emergent edge: {e1.label} <--> {e2.label} "
+                    print(f"[Hebbian] Emergent edge: {e1.label} <--{predicate}--> {e2.label} "
                           f"(strength: {initial_strength:.3f}, co-activations: {count})")
 
-        # Reset co-activation counts after forming edges
         if new_edges:
             self.coactivation_counts.clear()
 
@@ -319,7 +323,7 @@ class KnowledgeGraph:
 
         return {
             "emergent_edges": new_edges,
-            "decayed_edges": len(decayed)
+            "decayed_edges": decayed
         }
 
     # ==================== ORIGINAL METHODS ====================

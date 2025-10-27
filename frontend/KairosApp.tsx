@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -6,10 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { Upload, Sparkles } from "lucide-react";
+import ReactFlow, { MiniMap, Controls, Background, Node, Edge } from 'reactflow';
 
 // Define types
 interface ReasoningResult {
   conclusion?: string;
+  reasoningPath?: any[];
   [key: string]: any;
 }
 
@@ -30,6 +32,40 @@ export default function KairosFrontend() {
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [tab, setTab] = useState<string>("reasoning");
   const [loading, setLoading] = useState<boolean>(false);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+
+  useEffect(() => {
+    if (result?.reasoning?.reasoningPath) {
+      const path = result.reasoning.reasoningPath;
+      const newNodes: Node[] = [];
+      const newEdges: Edge[] = [];
+      let yPos = 0;
+
+      path.forEach((step, i) => {
+        const nodeId = `node-${i}`;
+        newNodes.push({
+          id: nodeId,
+          data: { label: `${step.step}: ${step.inference}` },
+          position: { x: 250, y: yPos },
+        });
+        yPos += 100;
+
+        if (i > 0) {
+          newEdges.push({
+            id: `edge-${i-1}-${i}`,
+            source: `node-${i-1}`,
+            target: nodeId,
+            animated: true,
+          });
+        }
+      });
+
+      setNodes(newNodes);
+      setEdges(newEdges);
+    }
+  }, [result]);
+
 
   const handleQuery = async () => {
     if (!apiKey) {
@@ -116,6 +152,7 @@ export default function KairosFrontend() {
           <TabsTrigger value="reasoning">Reasoning</TabsTrigger>
           <TabsTrigger value="validation">Validation</TabsTrigger>
           <TabsTrigger value="graph">Reasoning Pathway</TabsTrigger>
+          <TabsTrigger value="kg_explorer">KG Explorer</TabsTrigger>
         </TabsList>
 
         <TabsContent value="reasoning">
@@ -126,8 +163,16 @@ export default function KairosFrontend() {
           <Card><CardContent className="p-4 whitespace-pre-wrap text-sm">{JSON.stringify(result?.validation, null, 2)}</CardContent></Card>
         </TabsContent>
 
-        <TabsContent value="graph">
-          <Card><CardContent className="p-4"><i>Reasoning graph visualization coming soon...</i></CardContent></Card>
+        <TabsContent value="graph" style={{ height: '500px' }}>
+          <ReactFlow nodes={nodes} edges={edges}>
+            <MiniMap />
+            <Controls />
+            <Background />
+          </ReactFlow>
+        </TabsContent>
+
+        <TabsContent value="kg_explorer">
+          <Card><CardContent className="p-4"><i>Knowledge Graph Explorer coming soon...</i></CardContent></Card>
         </TabsContent>
       </Tabs>
     </div>

@@ -1,0 +1,7 @@
+cycle,question_id,question,hebbian_on,accuracy,conclusion,grounding_score,kg_total_relations_before
+1,1,What are the security risks for the ApolloContract?,True,True,"Security audit completed. Found 1 vulnerable entities: ApolloContract. Issues found related to: Contract with Known Vulnerabilities, Un-audited Smart Contract.",0.0,1
+1,2,Has the ApolloContract been audited?,True,True,"Security audit completed. Found 1 vulnerable entities: ApolloContract. Issues found related to: Contract with Known Vulnerabilities, Un-audited Smart Contract.",0.0,1
+2,1,What are the security risks for the ApolloContract?,True,True,"Security audit completed. Found 1 vulnerable entities: ApolloContract. Issues found related to: Contract with Known Vulnerabilities, Un-audited Smart Contract.",0.0,1
+2,2,Has the ApolloContract been audited?,True,True,"Security audit completed. Found 1 vulnerable entities: ApolloContract. Issues found related to: Contract with Known Vulnerabilities, Un-audited Smart Contract.",0.0,1
+3,1,What are the security risks for the ApolloContract?,True,True,"Security audit completed. Found 1 vulnerable entities: ApolloContract. Issues found related to: Contract with Known Vulnerabilities, Un-audited Smart Contract.",0.0,1
+3,2,Has the ApolloContract been audited?,True,True,"Security audit completed. Found 1 vulnerable entities: ApolloContract. Issues found related to: Contract with Known Vulnerabilities, Un-audited Smart Contract.",0.0,1

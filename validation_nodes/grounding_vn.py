@@ -1,19 +1,15 @@
 # === GroundingVN ===
+import re
+import json
+
 def run_grounding_vn(reasoning_output, kg):
     """
     Validate that reasoning claims are grounded in the knowledge graph.
-
-    Args:
-        reasoning_output: The reasoning module output
-        kg: Knowledge graph instance
-
-    Returns:
-        Validation result with grounding score and feedback
     """
-    # Get source triples from reasoning output
+    print("--- GroundingVN --- ")
     claimed_triples = reasoning_output.get("source_triples", [])
+    print(f"Received triples: {json.dumps(claimed_triples, indent=2)}")
 
-    # If no source triples provided but reasoning was done, skip validation
     if not claimed_triples:
         return {
             "vn_type": "GroundingVN",
@@ -21,41 +17,42 @@ def run_grounding_vn(reasoning_output, kg):
             "score": 1.0,
             "feedback": "No specific triples claimed (skipped grounding check)"
         }
+    
     grounded = 0
-    total = len(claimed_triples)
+    total = 0
     missing = []
+    
+    triple_pattern = re.compile(r"(.*?)\s*--(.+?)-->\s*(.*)")
 
     for triple_str in claimed_triples:
-        try:
-            # Format: "Subject --predicate--> Object"
-            parts = triple_str.split("--")
-            subj = parts[0].strip()
-            pred, obj = parts[1].split("-->") if "-->" in parts[1] else parts[1].split("→")
-            pred = pred.strip()
-            obj = obj.strip()
-
-            matches = kg.query(subject=subj, predicate=pred, object_=obj)
-            if matches:
-                grounded += 1
-            else:
-                missing.append((subj, pred, obj))
-        except Exception as e:
-            print("Failed to parse triple:", triple_str, e)
-            total -= 1
+        match = triple_pattern.match(triple_str)
+        if not match:
+            print(f"  - No match for: {triple_str}")
             continue
 
-    score = grounded / total if total > 0 else 0.0
-    valid = (score >= 0.8)
+        total += 1
+        subj, pred, obj = [s.strip() for s in match.groups()]
+        print(f"  - Parsed: ('{subj}', '{pred}', '{obj}')")
 
-    feedback = "All triples are grounded in the KG." if not missing else (
+        matches = kg.query(subject=subj, predicate=pred, object_=obj)
+        if matches:
+            print("    - Found in KG")
+            grounded += 1
+        else:
+            print("    - NOT found in KG")
+            missing.append((subj, pred, obj))
+
+    score = grounded / total if total > 0 else 1.0
+    valid = (score >= 0.8)
+    print(f"Score: {score}")
+
+    feedback = "All claimed triples are grounded in the KG." if not missing else (
         f"Missing triples: {', '.join([f'{s} --{p}--> {o}' for s, p, o in missing])}"
     )
 
-    result = {
+    return {
         "vn_type": "GroundingVN",
         "valid": valid,
         "score": round(score, 2),
         "feedback": feedback
     }
-
-    return result

@@ -22,6 +22,7 @@ class SecurityAuditReasoningModule(ReasoningModule):
 
     def run(self, subquery, knowledgeGraph):
         """Applies security rules to the knowledge graph to find vulnerabilities."""
+        print("--- SecurityAuditReasoningModule --- ")
         reasoning_steps = []
         triggered_rules = set()
         vulnerable_entities = set()
@@ -32,6 +33,8 @@ class SecurityAuditReasoningModule(ReasoningModule):
             for rule in self.rules:
                 is_violated, evidence_list = self._check_rule(rule, entity, knowledgeGraph)
                 if is_violated:
+                    print(f"  - Rule '{rule['name']}' triggered for entity '{entity.label}'")
+                    print(f"    - Evidence: {evidence_list}")
                     triggered_rules.add(rule['name'])
                     vulnerable_entities.add(entity.label)
                     reasoning_steps.append({
@@ -99,7 +102,7 @@ class SecurityAuditReasoningModule(ReasoningModule):
         if source == 'entity':
             entity_value = getattr(entity, attribute, None)
             if operator == '==' and entity_value == value:
-                return True, f"{entity.label} --is_a--> {value}"
+                return True, None # This is an entity check, not a relation, so no triple evidence
             if operator == '!=' and entity_value != value:
                 return True, None
 

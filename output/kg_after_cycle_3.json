@@ -13,6 +13,12 @@
       "properties": {}
     },
     {
+      "id": "gas-limit-vuln",
+      "label": "GasLimitVulnerability",
+      "type": "Vulnerability",
+      "properties": {}
+    },
+    {
       "id": "chain-guard-audit",
       "label": "ChainGuard Audit",
       "type": "Audit",

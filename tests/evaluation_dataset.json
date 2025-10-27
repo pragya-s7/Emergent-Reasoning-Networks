@@ -9,6 +9,11 @@
       "question": "Has the ApolloContract been audited?",
       "expected_conclusion_keywords": ["ApolloContract", "Un-audited Smart Contract"],
       "key_triples": []
+    },
+    {
+      "question": "Are there any Reentrancy or GasLimitVulnerability issues with the ApolloContract?",
+      "expected_conclusion_keywords": ["ApolloContract", "Reentrancy", "GasLimitVulnerability"],
+      "key_triples": ["ApolloContract --has_vulnerability--> Reentrancy"]
     }
   ]
 }
