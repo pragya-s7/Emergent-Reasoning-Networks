@@ -1,0 +1,9 @@
+{
+  "collaboration_questions": [
+    {
+      "question": "Analyze the latest corporate communications from Project Phoenix and assess if the announced security partnership mitigates the risks identified in their last audit.",
+      "expected_module_chain": ["corporate_communications", "security_audit"],
+      "expected_conclusion_keywords": ["Project Phoenix", "ChainGuard", "mitigates"]
+    }
+  ]
+}

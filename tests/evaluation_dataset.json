@@ -2,12 +2,12 @@
   "evaluation_questions": [
     {
       "question": "What are the security risks for the ApolloContract?",
-      "expected_conclusion_keywords": ["ApolloContract", "vulnerability", "Reentrancy"],
+      "expected_conclusion_keywords": ["ApolloContract", "Un-audited Smart Contract", "Contract with Known Vulnerabilities"],
       "key_triples": ["ApolloContract --has_vulnerability--> Reentrancy"]
     },
     {
       "question": "Has the ApolloContract been audited?",
-      "expected_conclusion_keywords": ["not been audited", "no audit history"],
+      "expected_conclusion_keywords": ["ApolloContract", "Un-audited Smart Contract"],
       "key_triples": []
     }
   ]

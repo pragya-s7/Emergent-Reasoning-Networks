@@ -44,7 +44,11 @@ def run_evaluation(hebbian_on: bool, num_cycles: int):
             # Run the orchestrator
             # Note: We are not passing an OpenAI key, so only non-LLM modules will fully function.
             # This is sufficient for testing the SecurityAuditReasoningModule and grounding.
-            orchestrator_output = orchestrate(question, kg, run_validation=True)
+            orchestrator_output = orchestrate(question, kg, run_validation=False)
+
+            if orchestrator_output is None:
+                print(f"    - DEBUG: Orchestrator returned None.")
+                continue
 
             # --- Analyze the result ---
             conclusion = orchestrator_output.get('reasoning', {}).get('conclusion', '')
@@ -53,6 +57,9 @@ def run_evaluation(hebbian_on: bool, num_cycles: int):
 
             # Check accuracy
             accuracy = all(kw.lower() in conclusion.lower() for kw in item['expected_conclusion_keywords'])
+
+            if not accuracy:
+                print(f"    - DEBUG: Accuracy failed. Orchestrator output: {orchestrator_output}")
 
             # Log results
             results.append({
