@@ -32,14 +32,15 @@ echo "==========================================================================
 echo "STEP 1/4: BASELINE COMPARISON (10 questions)"
 echo "Estimated time: 12-15 minutes"
 echo "================================================================================"
-python scripts/evaluate_baselines_quick.py \
-    --anthropic-key ${ANTHROPIC_KEY} \
-    --n-questions 10 \
-    --output-dir ${OUTPUT_DIR} \
-    --seed 42
+# NOTE: Temporarily skipping Step 1 because results have already been generated.
+# python scripts/evaluate_baselines_quick.py \
+#     --anthropic-key ${ANTHROPIC_KEY} \
+#     --n-questions 10 \
+#     --output-dir ${OUTPUT_DIR} \
+#     --seed 42
 
 echo ""
-echo "✅ Baseline comparison complete!"
+echo "⏭️  Baseline comparison skipped (existing results reused)."
 echo ""
 
 # Step 2: Validation Effectiveness (10 questions x 3 modules = 30 calls, ~8-10 min)
@@ -47,14 +48,15 @@ echo "==========================================================================
 echo "STEP 2/4: VALIDATION EFFECTIVENESS (10 questions)"
 echo "Estimated time: 8-10 minutes"
 echo "================================================================================"
-python scripts/evaluate_validation_fixed.py \
-    --anthropic-key ${ANTHROPIC_KEY} \
-    --n-questions 10 \
-    --output-dir ${OUTPUT_DIR} \
-    --seed 42
+# NOTE: Temporarily skipping Step 2 because results have already been generated.
+# python scripts/evaluate_validation_fixed.py \
+#     --anthropic-key ${ANTHROPIC_KEY} \
+#     --n-questions 10 \
+#     --output-dir ${OUTPUT_DIR} \
+#     --seed 42
 
 echo ""
-echo "✅ Validation evaluation complete!"
+echo "⏭️  Validation evaluation skipped (existing results reused)."
 echo ""
 
 # Step 3: Ablation Study (15 questions x 7 conditions = 105 calls, ~25-30 min)
