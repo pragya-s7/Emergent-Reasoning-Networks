@@ -205,6 +205,71 @@ def plot_validation_effectiveness(csv_path: str, output_dir: str):
     plt.close()
 
 
+def plot_baseline_comparison_from_csv(csv_path: str, output_dir: str):
+    """
+    Compare Kairos against baseline systems from CSV results.
+    """
+    df = pd.read_csv(csv_path)
+
+    # Calculate means for each baseline
+    baseline_stats = df.groupby('baseline_type').agg({
+        'trust_score': 'mean',
+        'latency': 'mean',
+        'reasoning_steps': 'mean'
+    })
+
+    baselines = baseline_stats.index.tolist()
+
+    # Create figure with 2 subplots
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    fig.suptitle('Baseline Comparison: Kairos vs Alternative Approaches', fontsize=14, fontweight='bold')
+
+    # Plot 1: Trust Scores
+    colors = ['#2E86AB', '#F77F00', '#E63946', '#06A77D', '#9D4EDD']
+    trust_scores = baseline_stats['trust_score'].values
+
+    bars = axes[0].bar(range(len(baselines)), trust_scores, color=colors[:len(baselines)], alpha=0.8, edgecolor='black', linewidth=1.5)
+
+    # Highlight Kairos
+    kairos_idx = baselines.index('kairos_full') if 'kairos_full' in baselines else -1
+    if kairos_idx >= 0:
+        bars[kairos_idx].set_color('#2E86AB')
+        bars[kairos_idx].set_alpha(1.0)
+
+    axes[0].set_ylabel('Mean Trust Score', fontweight='bold')
+    axes[0].set_xlabel('System', fontweight='bold')
+    axes[0].set_title('Trust Score Comparison')
+    axes[0].set_xticks(range(len(baselines)))
+    axes[0].set_xticklabels([b.replace('_', ' ').title() for b in baselines], rotation=45, ha='right')
+    axes[0].grid(True, axis='y', alpha=0.3)
+    axes[0].set_ylim(0, 1.0)
+
+    # Add value labels
+    for i, v in enumerate(trust_scores):
+        axes[0].text(i, v + 0.02, f'{v:.3f}', ha='center', va='bottom', fontweight='bold')
+
+    # Plot 2: Latency Comparison
+    latencies = baseline_stats['latency'].values
+    axes[1].bar(range(len(baselines)), latencies, color=colors[:len(baselines)], alpha=0.8, edgecolor='black', linewidth=1.5)
+
+    axes[1].set_ylabel('Mean Latency (seconds)', fontweight='bold')
+    axes[1].set_xlabel('System', fontweight='bold')
+    axes[1].set_title('Response Time Comparison')
+    axes[1].set_xticks(range(len(baselines)))
+    axes[1].set_xticklabels([b.replace('_', ' ').title() for b in baselines], rotation=45, ha='right')
+    axes[1].grid(True, axis='y', alpha=0.3)
+
+    # Add value labels
+    for i, v in enumerate(latencies):
+        axes[1].text(i, v + 0.1, f'{v:.2f}s', ha='center', va='bottom', fontweight='bold')
+
+    plt.tight_layout()
+    output_path = Path(output_dir) / 'baseline_comparison.png'
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    print(f"Saved: {output_path}")
+    plt.close()
+
+
 def plot_baseline_comparison(baseline_results: dict, output_dir: str):
     """
     Compare Kairos against baseline systems.
@@ -321,6 +386,7 @@ def plot_edge_strength_heatmap(kg_snapshots: list, output_dir: str):
 def create_all_visualizations(plasticity_csv: str = None,
                               ablation_csv: str = None,
                               validation_csv: str = None,
+                              baseline_csv: str = None,
                               kg_snapshots: list = None,
                               output_dir: str = "output/figures"):
     """
@@ -330,6 +396,7 @@ def create_all_visualizations(plasticity_csv: str = None,
         plasticity_csv: Path to plasticity evaluation results
         ablation_csv: Path to ablation study results
         validation_csv: Path to validation evaluation results
+        baseline_csv: Path to baseline comparison results
         kg_snapshots: List of KG snapshot paths
         output_dir: Where to save figures
     """
@@ -355,6 +422,10 @@ def create_all_visualizations(plasticity_csv: str = None,
         print("\n4. Edge strength heatmap...")
         plot_edge_strength_heatmap(kg_snapshots, output_dir)
 
+    if baseline_csv:
+        print("\n5. Baseline comparison...")
+        plot_baseline_comparison_from_csv(baseline_csv, output_dir)
+
     print("\n" + "="*80)
     print(f"All visualizations saved to {output_dir}/")
     print("="*80)
@@ -364,6 +435,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Generate Kairos evaluation visualizations")
+    parser.add_argument("--baseline-results", help="Path to baseline CSV")
     parser.add_argument("--plasticity-results", help="Path to plasticity CSV")
     parser.add_argument("--ablation-results", help="Path to ablation CSV")
     parser.add_argument("--validation-results", help="Path to validation CSV")
@@ -373,6 +445,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     create_all_visualizations(
+        baseline_csv=args.baseline_results,
         plasticity_csv=args.plasticity_results,
         ablation_csv=args.ablation_results,
         validation_csv=args.validation_results,
