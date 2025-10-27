@@ -21,30 +21,53 @@ class SecurityAuditReasoningModule(ReasoningModule):
             return json.load(f).get('rules', [])
 
     def run(self, subquery, knowledgeGraph):
-        """Applies security rules to the knowledge graph to find vulnerabilities."""
-        print("--- SecurityAuditReasoningModule --- ")
+        """Applies security rules to the knowledge graph, including emergent knowledge."""
         reasoning_steps = []
         triggered_rules = set()
         vulnerable_entities = set()
         source_triples = []
 
-        # Simplified rule engine
+        # --- Step 1: Check for Emergent Knowledge ---
+        query_entities = [e for e in knowledgeGraph.entities.values() if e.label.lower() in subquery.lower()]
+        for entity in query_entities:
+            # Check for emergent relations
+            emergent_relations = knowledgeGraph.query(subject=entity.label, predicate="co_occurs_with")
+            emergent_relations.extend(knowledgeGraph.query(object_=entity.label, predicate="co_occurs_with"))
+
+            for subj, rel, obj in emergent_relations:
+                reasoning_steps.append({
+                    "step": "Leverage Emergent Knowledge",
+                    "data": f"Found emergent link: {subj.label} --{rel.predicate}--> {obj.label}",
+                    "source": "hebbian_emergence",
+                    "inference": f"The frequent co-activation of '{subj.label}' and '{obj.label}' suggests a potential relationship that warrants investigation."
+                })
+                # Now, check the rules for the newly linked entity
+                linked_entity = obj if subj.label == entity.label else subj
+                for rule in self.rules:
+                    is_violated, evidence_list = self._check_rule(rule, linked_entity, knowledgeGraph)
+                    if is_violated:
+                        triggered_rules.add(rule['name'])
+                        vulnerable_entities.add(linked_entity.label)
+                        if evidence_list:
+                            source_triples.extend(evidence_list)
+
+
+        # --- Step 2: Standard Rule Engine ---
         for entity_id, entity in knowledgeGraph.entities.items():
             for rule in self.rules:
                 is_violated, evidence_list = self._check_rule(rule, entity, knowledgeGraph)
                 if is_violated:
-                    print(f"  - Rule '{rule['name']}' triggered for entity '{entity.label}'")
-                    print(f"    - Evidence: {evidence_list}")
-                    triggered_rules.add(rule['name'])
-                    vulnerable_entities.add(entity.label)
-                    reasoning_steps.append({
-                        "step": f"Rule Triggered: {rule['name']}",
-                        "data": f"Entity '{entity.label}' (Type: {entity.type}) matched the rule.",
-                        "source": self.sources["security_rules"],
-                        "inference": rule['inference']
-                    })
-                    if evidence_list:
-                        source_triples.extend(evidence_list)
+                    if rule['name'] not in triggered_rules: # Avoid duplicate rule triggers
+                        triggered_rules.add(rule['name'])
+                        vulnerable_entities.add(entity.label)
+                        reasoning_steps.append({
+                            "step": f"Rule Triggered: {rule['name']}",
+                            "data": f"Entity '{entity.label}' (Type: {entity.type}) matched the rule.",
+                            "source": self.sources["security_rules"],
+                            "inference": rule['inference']
+                        })
+                        if evidence_list:
+                            source_triples.extend(evidence_list)
 
         if not reasoning_steps:
             conclusion = "No security vulnerabilities found based on the current rule set."

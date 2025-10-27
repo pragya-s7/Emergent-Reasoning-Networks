@@ -2,14 +2,13 @@ import os
 import dotenv
 from typing import Dict, Any, Optional
 
-from ingestion.upstage_ocr import extract_text_from_file
 from ingestion.triple_extractor import extract_triples_from_text, ingest_triples_into_kg
 from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 
 # Load environment variables from .env file
 dotenv.load_dotenv()
 
-def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: Optional[str] = None,
+def run_pipeline(filename: str, openai_key: Optional[str] = None, 
                 output_dir: str = "output", existing_kg: Optional[KnowledgeGraph] = None):
     """
     Run the full document ingestion pipeline.
@@ -17,7 +16,6 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: O
     Args:
         filename: Path to the document file
         openai_key: OpenAI API key (optional, will use environment variable if not provided)
-        upstage_key: Upstage API key (optional, will use environment variable if not provided)
         output_dir: Directory to save the knowledge graph
         existing_kg: Optional existing knowledge graph to update
         
@@ -26,7 +24,6 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: O
     """
     # Use provided API keys or get from environment
     openai_key = openai_key or os.environ.get("OPENAI_API_KEY")
-    upstage_key = upstage_key or os.environ.get("UPSTAGE_API_KEY")
     
     if not openai_key:
         raise ValueError("OpenAI API key not provided and not found in environment variables")
@@ -41,19 +38,17 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: O
     print("Extracting text from file...")
     
     try:
-        # Extract text using Upstage OCR
-        ocr_result = extract_text_from_file(filename, upstage_key)
-        raw_text = ocr_result["text"]
+        # Extract text from file
+        with open(filename, 'r') as f:
+            raw_text = f.read()
         
         # Create document metadata
         doc_metadata = {
             "filename": doc_id,
-            "confidence": ocr_result["confidence"],
-            "page_count": len(ocr_result.get("pages", [])),
-            "model_version": ocr_result.get("model_version", "")
+            "confidence": 1.0, # Default confidence for text files
         }
         
-        print(f"Extracted {len(raw_text)} characters with confidence {doc_metadata['confidence']:.2f}")
+        print(f"Extracted {len(raw_text)} characters")
         print("Extracting triples using OpenAI...")
         
         # Extract triples from text
@@ -70,16 +65,14 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: O
                     subject_type="Entity",
                     object_type="Entity",
                     confidence=doc_metadata["confidence"],
-                    source="upstage_openai",
+                    source="text_file",
                     metadata={
                         "doc_id": doc_id,
-                        "extracted_at": doc_metadata.get("extracted_at", ""),
-                        "ocr_confidence": doc_metadata["confidence"]
                     }
                 )
         else:
             # Create new KG
-            kg = ingest_triples_into_kg(triples, source="upstage_openai", 
+            kg = ingest_triples_into_kg(triples, source="text_file", 
                                        doc_id=doc_id, doc_metadata=doc_metadata)
         
         # Save knowledge graph
@@ -91,7 +84,6 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None, upstage_key: O
         print("\nIngestion Summary:")
         print(f"- Document: {doc_id}")
         print(f"- Text length: {len(raw_text)} characters")
-        print(f"- OCR confidence: {doc_metadata['confidence']:.2f}")
         print(f"- Triples extracted: {len(triples)}")
         print(f"- Total entities: {len(kg.entities)}")
         print(f"- Total relations: {len(kg.relations)}")

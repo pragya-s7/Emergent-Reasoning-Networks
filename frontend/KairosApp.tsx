@@ -28,8 +28,8 @@ interface ApiResponse {
 export default function KairosFrontend() {
   const [query, setQuery] = useState<string>("");
   const [apiKey, setApiKey] = useState<string>("");
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [result, setResult] = useState<ApiResponse | null>(null);
+  const [knowledgeGraph, setKnowledgeGraph] = useState<any | null>(null);
   const [tab, setTab] = useState<string>("reasoning");
   const [loading, setLoading] = useState<boolean>(false);
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -81,7 +81,8 @@ export default function KairosFrontend() {
         body: JSON.stringify({
           query,
           openai_key: apiKey,
-          run_validation: true
+          run_validation: true,
+          knowledge_graph: knowledgeGraph
         }),
       });
       const data: ApiResponse = await res.json();
@@ -98,18 +99,34 @@ export default function KairosFrontend() {
     }
   };
 
-  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleTxtUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setPdfFile(file);
     const formData = new FormData();
     formData.append("file", file);
     try {
       await fetch("/api/ingest", { method: "POST", body: formData });
-      alert("PDF ingested successfully.");
+      alert("TXT file ingested successfully. You can now query the knowledge graph.");
     } catch (err) {
       console.error("Ingestion failed:", err);
     }
+  };
+
+  const handleKgUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const kg = JSON.parse(event.target?.result as string);
+        setKnowledgeGraph(kg);
+        alert("Knowledge graph loaded successfully.");
+      } catch (err) {
+        console.error("Failed to parse knowledge graph:", err);
+        alert("Invalid knowledge graph file.");
+      }
+    };
+    reader.readAsText(file);
   };
 
 
@@ -141,9 +158,26 @@ export default function KairosFrontend() {
             <Sparkles className="mr-2 h-4 w-4" /> Generate Reasoning
           </Button>
           <Label className="flex items-center gap-2 cursor-pointer">
-            <Upload className="h-4 w-4" /> Upload PDF
-            <Input type="file" accept="application/pdf" className="hidden" onChange={handleFileUpload} />
+            <Upload className="h-4 w-4" /> Upload TXT
+            <Input type="file" accept=".txt" className="hidden" onChange={handleTxtUpload} />
           </Label>
+          <Label className="flex items-center gap-2 cursor-pointer">
+            <Upload className="h-4 w-4" /> Upload KG
+            <Input type="file" accept=".json" className="hidden" onChange={handleKgUpload} />
+          </Label>
+          <Button onClick={() => {
+            if (result?.reasoning?.knowledge_graph) {
+              const blob = new Blob([JSON.stringify(result.reasoning.knowledge_graph, null, 2)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'knowledge_graph.json';
+              a.click();
+              URL.revokeObjectURL(url);
+            }
+          }} disabled={!result?.reasoning?.knowledge_graph}>
+            Download KG
+          </Button>
         </div>
       </Card>
 

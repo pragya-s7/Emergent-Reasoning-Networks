@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { spawn } from 'child_process';
 import path from 'path';
+import fs from 'fs';
+import os from 'os';
 
 interface QueryRequest {
   query: string;
@@ -8,6 +10,7 @@ interface QueryRequest {
   kg_path?: string;
   run_validation?: boolean;
   alignment_profile?: any;
+  knowledge_graph?: any;
 }
 
 export default async function handler(
@@ -20,14 +23,20 @@ export default async function handler(
   }
 
   try {
-    const { query, openai_key, kg_path, run_validation, alignment_profile }: QueryRequest = req.body;
+    const { query, openai_key, kg_path, run_validation, alignment_profile, knowledge_graph }: QueryRequest = req.body;
 
     if (!query) {
       return res.status(400).json({ error: 'Query is required' });
     }
 
-    // Default knowledge graph path
-    const kgPath = kg_path || path.join(process.cwd(), 'output', 'knowledge_graph.json');
+    let kgPath = kg_path || path.join(process.cwd(), 'output', 'knowledge_graph.json');
+    let tempKgPath: string | null = null;
+
+    if (knowledge_graph) {
+      tempKgPath = path.join(os.tmpdir(), `kg_${Date.now()}.json`);
+      fs.writeFileSync(tempKgPath, JSON.stringify(knowledge_graph, null, 2));
+      kgPath = tempKgPath;
+    }
 
     // Prepare arguments for Python script
     const scriptPath = path.join(process.cwd(), 'scripts', 'run_orchestrator.py');
@@ -84,6 +93,10 @@ export default async function handler(
             const trustScore = scores.reduce((a: number, b: number) => a + b, 0) / scores.length;
             result.trust_score = parseFloat(trustScore.toFixed(2));
           }
+        }
+
+        if (tempKgPath) {
+          fs.unlinkSync(tempKgPath);
         }
 
         res.status(200).json(result);
