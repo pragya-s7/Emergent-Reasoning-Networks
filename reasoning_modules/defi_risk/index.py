@@ -1,4 +1,4 @@
-import openai
+import anthropic
 import datetime
 import sys
 import os
@@ -14,11 +14,9 @@ class FinancialAnalysisReasoningModule(ReasoningModule):
             "risk_data": "Risk Assessment Database"
         }
 
-    def run(self, subquery, knowledgeGraph, openai_key=None):
-        if not openai_key:
-            raise ValueError("OpenAI API key is required for financial analysis")
-
-        openai.api_key = openai_key
+    def run(self, subquery, knowledgeGraph, anthropic_key=None):
+        if not anthropic_key:
+            raise ValueError("Anthropic API key is required for financial analysis")
 
         # Extract relevant triples from the KG
         relevant_triples = knowledgeGraph.query(subject=None, predicate=None, object_=None)
@@ -26,9 +24,8 @@ class FinancialAnalysisReasoningModule(ReasoningModule):
             f"{s.label} --{r.predicate}--> {o.label}" for s, r, o in relevant_triples
         )
 
-        # Ask GPT to reason over the facts and answer the query
-        prompt = f"""
-You are a financial analysis reasoning agent. You are given the following structured facts from a knowledge graph:
+        # Ask Claude to reason over the facts and answer the query
+        prompt = f"""You are a financial analysis reasoning agent. You are given the following structured facts from a knowledge graph:
 
 {triples_text}
 
@@ -49,21 +46,30 @@ Sources:
 - <subject> --<predicate>--> <object>
 """
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
+        client = anthropic.Anthropic(api_key=anthropic_key)
+        response = client.messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=4096,
+            temperature=0,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
         )
 
-        content = response["choices"][0]["message"]["content"]
+        # Extract the response content
+        response_content = response.content[0].text
 
         # Parse output
         try:
-            answer = content.split("Answer:")[1].split("Reasoning:")[0].strip()
-            reasoning_lines = content.split("Reasoning:")[1].split("Sources:")[0].strip().split("\n")
+            answer = response_content.split("Answer:")[1].split("Reasoning:")[0].strip()
+            reasoning_lines = response_content.split("Reasoning:")[1].split("Sources:")[0].strip().split("\n")
             reasoning_steps = [line.strip("- ").strip() for line in reasoning_lines if line.strip()]
-            source_lines = content.split("Sources:")[1].strip().split("\n")
+            source_lines = response_content.split("Sources:")[1].strip().split("\n")
             source_triples = [line.strip("- ").strip() for line in source_lines if line.strip()]
-            
+
             # Convert reasoning steps to structured format
             structured_steps = []
             for i, step in enumerate(reasoning_steps):
@@ -73,10 +79,10 @@ Sources:
                     "source": self.sources.get("financial_data", "Analysis"),
                     "inference": step
                 })
-            
+
             # Calculate confidence based on number of sources
             confidence = min(0.95, 0.5 + (len(source_triples) * 0.1))
-            
+
             return {
                 "subquery": subquery,
                 "timestamp": datetime.datetime.now().isoformat(),
@@ -90,9 +96,9 @@ Sources:
                     "reasoning_steps": len(reasoning_steps)
                 }
             }
-            
+
         except Exception as e:
-            print(f"Failed to parse RM output: {e}")
+            print(f"Failed to parse financial RM output: {e}")
             return {
                 "subquery": subquery,
                 "timestamp": datetime.datetime.now().isoformat(),
@@ -106,10 +112,10 @@ Sources:
 
 
 # For backward compatibility
-def run_financial_analysis_rm(query, kg, openai_key):
+def run_financial_analysis_rm(query, kg, anthropic_key):
     """Legacy function for backward compatibility"""
     rm = FinancialAnalysisReasoningModule()
-    result = rm.run(query, kg, openai_key)
+    result = rm.run(query, kg, anthropic_key)
 
     # Convert to old format for compatibility
     return {
@@ -121,6 +127,6 @@ def run_financial_analysis_rm(query, kg, openai_key):
     }
 
 # Legacy alias for backward compatibility
-def run_defi_risk_rm(query, kg, openai_key):
+def run_defi_risk_rm(query, kg, anthropic_key):
     """Deprecated: use run_financial_analysis_rm instead"""
-    return run_financial_analysis_rm(query, kg, openai_key)
+    return run_financial_analysis_rm(query, kg, anthropic_key)

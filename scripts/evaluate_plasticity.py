@@ -17,7 +17,7 @@ def main():
     parser.add_argument("--query", required=True, help="Query to run for evaluation")
     parser.add_argument("--cycles", type=int, default=10, help="Number of cycles to run")
     parser.add_argument("--kg-path", default="output/knowledge_graph.json", help="Path to knowledge graph")
-    parser.add_argument("--openai-key", required=True, help="OpenAI API key")
+    parser.add_argument("--anthropic-key", required=True, help="OpenAI API key")
     parser.add_argument("--output-dir", default="output", help="Output directory")
     args = parser.parse_args()
 
@@ -38,10 +38,13 @@ def main():
             print(f"Running cycle {i+1}/{args.cycles}...")
 
             start_time = time.time()
-            result = orchestrate(args.query, kg, args.openai_key)
+            result = orchestrate(args.query, kg, args.anthropic_key)
             latency = time.time() - start_time
 
-            emergent_connections = len(result.get('hebbian_plasticity', {}).get('emergent_edges', []))
+            hebbian_results = result.get('hebbian_plasticity', {})
+            emergent_connections = 0
+            if isinstance(hebbian_results, dict):
+                emergent_connections = len(hebbian_results.get('emergent_edges', []))
             
             top_k_edges = kg.get_strongest_edges(top_k=10)
             avg_top_k_strength = sum([edge[3] for edge in top_k_edges]) / len(top_k_edges) if top_k_edges else 0

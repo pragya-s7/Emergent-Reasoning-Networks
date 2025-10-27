@@ -1,4 +1,4 @@
-import openai
+import anthropic
 
 def get_default_alignment_profile() -> str:
     """Return a default alignment profile for demo purposes."""
@@ -10,19 +10,19 @@ def get_default_alignment_profile() -> str:
 """
 
 
-def run_alignment_vn(reasoning_output, openai_key, alignment_profile=None):
+def run_alignment_vn(reasoning_output, anthropic_key, alignment_profile=None):
     """
     Validate that reasoning aligns with user preferences and constraints.
 
     Args:
         reasoning_output: The reasoning module output
-        openai_key: OpenAI API key
+        anthropic_key: OpenAI API key
         alignment_profile: Optional user alignment profile (dict or str)
 
     Returns:
         Validation result with alignment score and feedback
     """
-    openai.api_key = openai_key
+    anthropic.api_key = anthropic_key
 
     # === Step 1: Get alignment profile
     if alignment_profile:
@@ -76,18 +76,26 @@ Feedback: <short explanation>
 """
 
     # === Step 4: Call LLM
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
+    client = anthropic.Anthropic(api_key=anthropic_key)
+    response = client.messages.create(
+        model="claude-3-haiku-20240307",
+        max_tokens=1024,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
     )
-
-    content = response["choices"][0]["message"]["content"]
+    
+    # Extract the response content
+    validation_result = response.content[0].text
 
     # === Step 5: Parse
     try:
-        aligned = "true" in content.lower().split("aligned:")[1].split("\n")[0].strip()
-        score = float(content.lower().split("score:")[1].split("\n")[0].strip())
-        feedback = content.split("Feedback:")[1].strip()
+        aligned = "true" in validation_result.lower().split("aligned:")[1].split("\n")[0].strip()
+        score = float(validation_result.lower().split("score:")[1].split("\n")[0].strip())
+        feedback = validation_result.split("Feedback:")[1].strip()
     except Exception as e:
         print("Failed to parse AlignmentVN output:", e)
         return {

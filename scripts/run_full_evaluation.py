@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 from core.orchestrator.index import orchestrate
 
-def run_full_evaluation(openai_key: str, num_cycles: int):
+def run_full_evaluation(anthropic_key: str, num_cycles: int):
     """Runs the full evaluation framework, including all validation nodes."""
     kg_path = 'tests/mock_kg_for_eval.json'
     dataset_path = 'tests/evaluation_dataset.json'
@@ -44,7 +44,7 @@ def run_full_evaluation(openai_key: str, num_cycles: int):
                     subj, pred, obj = [s.strip() for s in match.groups()]
                     initial_confidences[t] = kg.get_edge_strength(subj, pred, obj)
 
-            orchestrator_output = orchestrate(question, kg, openai_key=openai_key, run_validation=True)
+            orchestrator_output = orchestrate(question, kg, anthropic_key=anthropic_key, run_validation=True)
 
             if orchestrator_output is None or 'reasoning' not in orchestrator_output:
                 print(f"    - DEBUG: Orchestrator returned an invalid output.")
@@ -99,8 +99,8 @@ def run_full_evaluation(openai_key: str, num_cycles: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the Kairos full evaluation framework.")
-    parser.add_argument("--openai-key", required=True, help="OpenAI API key")
+    parser.add_argument("--anthropic-key", required=True, help="OpenAI API key")
     parser.add_argument("--cycles", type=int, default=5, help="Number of evaluation cycles.")
     args = parser.parse_args()
 
-    run_full_evaluation(openai_key=args.openai_key, num_cycles=args.cycles)
+    run_full_evaluation(anthropic_key=args.anthropic_key, num_cycles=args.cycles)

@@ -15,7 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description="Kairos Ablation Study Evaluation Script")
     parser.add_argument("--dataset", default="tests/evaluation_dataset.json", help="Path to evaluation dataset")
     parser.add_argument("--kg-path", default="output/knowledge_graph.json", help="Path to knowledge graph")
-    parser.add_argument("--openai-key", required=True, help="OpenAI API key")
+    parser.add_argument("--anthropic-key", required=True, help="OpenAI API key")
     parser.add_argument("--output-dir", default="output", help="Output directory")
     args = parser.parse_args()
 
@@ -62,7 +62,7 @@ def main():
                     original_vn = orchestrate.VN_REGISTRY[disabled_vn]
                     del orchestrate.VN_REGISTRY[disabled_vn]
 
-                result = orchestrate(query, kg, args.openai_key, run_validation=condition_params['run_validation'])
+                result = orchestrate(query, kg, args.anthropic_key, run_validation=condition_params['run_validation'])
                 
                 # Restore monkey patching
                 orchestrate.apply_hebbian_learning = original_apply_hebbian

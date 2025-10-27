@@ -80,7 +80,7 @@ export default function KairosFrontend() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query,
-          openai_key: apiKey,
+          anthropic_key: apiKey,
           run_validation: true,
           knowledge_graph: knowledgeGraph
         }),
@@ -135,7 +135,7 @@ export default function KairosFrontend() {
       <h1 className="text-3xl font-bold tracking-tight">Kairos Reasoning Network</h1>
       <Card className="p-4 space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="apiKey">OpenAI API Key</Label>
+          <Label htmlFor="apiKey">Anthropic API Key</Label>
           <Input
             id="apiKey"
             type="password"

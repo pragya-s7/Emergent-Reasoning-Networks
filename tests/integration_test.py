@@ -18,17 +18,17 @@ class IntegrationTest(unittest.TestCase):
     def test_end_to_end_flow(self):
         """Test the complete flow from query to validated reasoning"""
         query = "What are the risks of investing in Ethereum?"
-        openai_key = os.environ.get("OPENAI_API_KEY")
+        anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
         
         # Skip test if no API key is available
-        if not openai_key:
+        if not anthropic_key:
             self.skipTest("OpenAI API key not available")
         
         # Run the orchestrator
         result = orchestrate(
             query=query,
             knowledge_graph=self.kg,
-            openai_key=openai_key,
+            anthropic_key=anthropic_key,
             run_validation=True
         )
         

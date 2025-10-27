@@ -1,22 +1,22 @@
-import openai
+import anthropic
 from typing import Dict, Any, Optional
 
 # === LogicalVN ===
-def run_logical_vn(reasoning_output: Dict[str, Any], openai_key: str) -> Dict[str, Any]:
+def run_logical_vn(reasoning_output: Dict[str, Any], anthropic_key: str) -> Dict[str, Any]:
     """
     Validate the logical coherence of reasoning steps.
 
     Args:
         reasoning_output: The output from a reasoning module
-        openai_key: OpenAI API key
+        anthropic_key: OpenAI API key
 
     Returns:
         Validation result with validity score and feedback
     """
-    if not openai_key:
+    if not anthropic_key:
         raise ValueError("OpenAI API key is required for logical validation")
     
-    openai.api_key = openai_key
+    anthropic.api_key = anthropic_key
 
     # Extract reasoning steps and answer - handle both formats
     try:
@@ -66,24 +66,33 @@ Feedback: <brief explanation>
 
     # Call OpenAI API
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
+        client = anthropic.Anthropic(api_key=anthropic_key)
+        response = client.messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
         )
-        content = response["choices"][0]["message"]["content"]
+        
+        # Extract the response content
+        validation_result = response.content[0].text
     except Exception as e:
         return {
             "vn_type": "LogicalVN",
             "valid": False,
             "score": 0.0,
-            "feedback": f"OpenAI API error: {str(e)}"
+            "feedback": f"An error occurred: {str(e)}"
         }
 
     # Parse GPT Output
     try:
-        valid = "true" in content.lower().split("valid:")[1].split("\n")[0].strip()
-        score = float(content.lower().split("score:")[1].split("\n")[0].strip())
-        feedback = content.split("Feedback:")[1].strip()
+        valid = "true" in validation_result.lower().split("valid:")[1].split("\n")[0].strip()
+        score = float(validation_result.lower().split("score:")[1].split("\n")[0].strip())
+        feedback = validation_result.split("Feedback:")[1].strip()
     except Exception as e:
         return {
             "vn_type": "LogicalVN",

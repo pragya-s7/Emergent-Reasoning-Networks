@@ -73,7 +73,11 @@ class SecurityAuditReasoningModule(ReasoningModule):
             conclusion = "No security vulnerabilities found based on the current rule set."
             confidence = 0.95
         else:
-            conclusion = f"Security audit completed. Found {len(vulnerable_entities)} vulnerable entities: {', '.join(vulnerable_entities)}. Issues found related to: {', '.join(triggered_rules)}."
+            vulnerability_names = set()
+            for triple in source_triples:
+                if "--has_vulnerability-->" in triple:
+                    vulnerability_names.add(triple.split("-->")[1].strip())
+            conclusion = f"Security audit completed. Found {len(vulnerable_entities)} vulnerable entities: {', '.join(vulnerable_entities)}. Issues found related to: {', '.join(triggered_rules)}. Vulnerabilities: {', '.join(vulnerability_names)}."
             confidence = 0.80
 
         return {

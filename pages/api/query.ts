@@ -6,7 +6,7 @@ import os from 'os';
 
 interface QueryRequest {
   query: string;
-  openai_key?: string;
+  anthropic_key?: string;
   kg_path?: string;
   run_validation?: boolean;
   alignment_profile?: any;
@@ -23,7 +23,7 @@ export default async function handler(
   }
 
   try {
-    const { query, openai_key, kg_path, run_validation, alignment_profile, knowledge_graph }: QueryRequest = req.body;
+    const { query, anthropic_key, kg_path, run_validation, alignment_profile, knowledge_graph }: QueryRequest = req.body;
 
     if (!query) {
       return res.status(400).json({ error: 'Query is required' });
@@ -45,8 +45,8 @@ export default async function handler(
       '--kg-path', kgPath,
     ];
 
-    if (openai_key) {
-      args.push('--openai-key', openai_key);
+    if (anthropic_key) {
+      args.push('--anthropic-key', anthropic_key);
     }
 
     if (run_validation !== false) {

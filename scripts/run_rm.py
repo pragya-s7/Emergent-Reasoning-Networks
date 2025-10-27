@@ -19,9 +19,9 @@ kg = KnowledgeGraph()
 kg.load_from_json("output/knowledge_graph.json")
 
 query = "What are the major risks to Ethereum?"
-openai_key = "YOUR_KEY"
+anthropic_key = "YOUR_KEY"
 
-result = run_defi_risk_rm(query, kg, openai_key)
+result = run_defi_risk_rm(query, kg, anthropic_key)
 
 print("\n💡 RM Output:")
 print("Answer:", result["answer"])
@@ -39,7 +39,7 @@ from validation_nodes.grounding_vn import run_grounding_vn
 from validation_nodes.novelty_vn import run_novelty_vn
 from validation_nodes.alignment_vn import run_alignment_vn
 
-vn_result = run_logical_vn(result, openai_key)
+vn_result = run_logical_vn(result, anthropic_key)
 
 print("\n🧪 LogicalVN Result:")
 print("Valid:", vn_result["valid"])
@@ -59,7 +59,7 @@ print("Feedback:", grounding_result["feedback"])
 
 from validation_nodes.novelty_vn import run_novelty_vn
 
-novelty_result = run_novelty_vn(result, kg, openai_key)
+novelty_result = run_novelty_vn(result, kg, anthropic_key)
 
 print("\n🧬 NoveltyVN Result:")
 print("Novel:", novelty_result["valid"])
@@ -69,7 +69,7 @@ print("Feedback:", novelty_result["feedback"])
 
 from validation_nodes.alignment_vn import run_alignment_vn
 
-alignment_result = run_alignment_vn(result, alignment_profile, openai_key)
+alignment_result = run_alignment_vn(result, alignment_profile, anthropic_key)
 
 print("\n🎯 AlignmentVN Result:")
 print("Aligned:", alignment_result["valid"])

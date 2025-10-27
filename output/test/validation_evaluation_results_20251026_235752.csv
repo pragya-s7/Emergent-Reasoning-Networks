@@ -1,0 +1,2 @@
+question_id,question,module_type,trust_score,logical_score,grounding_score,novelty_score,alignment_score,validation_caught_issue,module_confidence
+sec_001,What are the security risks for the ApolloContract?,standard,0.675,1.0,1.0,0.2,0.5,False,0.8

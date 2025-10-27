@@ -251,7 +251,7 @@ trust_score = average([
 ### Backend
 - **Language**: Python 3.x
 - **Framework**: FastAPI, Flask
-- **ML/AI**: OpenAI GPT-4, Sentence Transformers, spaCy, Transformers
+- **ML/AI**: Anthropic Models, Sentence Transformers, spaCy, Transformers
 - **Knowledge Graph**: JSON-based with in-memory processing
 
 ### Frontend
@@ -265,7 +265,7 @@ trust_score = average([
 ```bash
 # Python 3.8+
 # Node.js 16+
-# OpenAI API key
+# Anthropic API key
 ```
 
 ### Backend Setup
@@ -274,7 +274,7 @@ trust_score = average([
 pip install -r requirements.txt
 
 # Set environment variables
-export OPENAI_API_KEY="your-api-key-here"
+export ANTHROPIC_API_KEY="your-api-key-here"
 ```
 
 ### Frontend Setup
@@ -292,7 +292,7 @@ npm run dev
 Ingest documents to build the knowledge graph:
 
 ```bash
-python scripts/main.py --file <path-to-pdf> --openai-key $OPENAI_API_KEY
+python scripts/main.py --file <path-to-pdf> --anthropic-key $ANTHROPIC_API_KEY
 ```
 
 ### 2. Query via CLI
@@ -300,7 +300,7 @@ python scripts/main.py --file <path-to-pdf> --openai-key $OPENAI_API_KEY
 python scripts/kairos_cli.py \
   --query "Analyze the financial risks in the system" \
   --kg-path "output/knowledge_graph.json" \
-  --openai-key $OPENAI_API_KEY
+  --anthropic-key $ANTHROPIC_API_KEY
 ```
 
 ### 3. Query via Web Interface
@@ -318,7 +318,7 @@ curl -X POST http://localhost:3000/api/query \
   -H "Content-Type: application/json" \
   -d '{
     "query": "What security vulnerabilities exist?",
-    "openai_key": "your-api-key"
+    "anthropic_key": "your-api-key"
   }'
 ```
 

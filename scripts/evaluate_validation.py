@@ -54,7 +54,7 @@ def main():
     parser = argparse.ArgumentParser(description="Kairos Validation Evaluation Script")
     parser.add_argument("--dataset", default="tests/evaluation_dataset.json", help="Path to evaluation dataset")
     parser.add_argument("--kg-path", default="output/knowledge_graph.json", help="Path to knowledge graph")
-    parser.add_argument("--openai-key", required=True, help="OpenAI API key")
+    parser.add_argument("--anthropic-key", required=True, help="OpenAI API key")
     parser.add_argument("--output-dir", default="output", help="Output directory")
     args = parser.parse_args()
 
@@ -80,7 +80,7 @@ def main():
 
             # Run with standard module
             print(f"Running query '{query}' with standard module...")
-            standard_result = orchestrate(query, kg, args.openai_key)
+            standard_result = orchestrate(query, kg, args.anthropic_key)
             writer.writerow({
                 'query': query,
                 'module_type': 'standard',
@@ -99,9 +99,9 @@ def main():
                 "description": "A noisy module for testing validation.",
                 "module": "__main__",
                 "class": "NoisySecurityAuditReasoningModule",
-                "requires_openai": False
+                "requires_anthropic": False
             }
-            noisy_result = orchestrate(query, kg, args.openai_key)
+            noisy_result = orchestrate(query, kg, args.anthropic_key)
             writer.writerow({
                 'query': query,
                 'module_type': 'noisy',

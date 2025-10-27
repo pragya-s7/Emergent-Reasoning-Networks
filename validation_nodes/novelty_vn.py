@@ -1,8 +1,8 @@
-import openai
+import anthropic
 
 # === Novelty VN ===
-def run_novelty_vn(reasoning_output, kg, openai_key):
-    openai.api_key = openai_key
+def run_novelty_vn(reasoning_output, kg, anthropic_key):
+    anthropic.api_key = anthropic_key
 
     # --- Step 1: Extract KG facts as text
     # Query all relations from KG
@@ -45,18 +45,26 @@ Score: <0-1>
 Feedback: <short explanation>
 """
 
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
+    client = anthropic.Anthropic(api_key=anthropic_key)
+    response = client.messages.create(
+        model="claude-3-haiku-20240307",
+        max_tokens=1024,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
     )
-
-    content = response["choices"][0]["message"]["content"]
+    
+    # Extract the response content
+    validation_result = response.content[0].text
 
     # --- Step 3: Parse LLM output
     try:
-        novel = "true" in content.lower().split("novel:")[1].split("\n")[0].strip()
-        score = float(content.lower().split("score:")[1].split("\n")[0].strip())
-        feedback = content.split("Feedback:")[1].strip()
+        score = float(validation_result.lower().split("score:")[1].split("\n")[0].strip())
+        novel = score > 0.2
+        feedback = validation_result.split("Feedback:")[1].strip()
     except Exception as e:
         print("Failed to parse NoveltyVN output:", e)
         return {

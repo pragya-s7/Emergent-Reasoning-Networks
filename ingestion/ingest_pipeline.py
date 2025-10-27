@@ -8,14 +8,14 @@ from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 # Load environment variables from .env file
 dotenv.load_dotenv()
 
-def run_pipeline(filename: str, openai_key: Optional[str] = None, 
+def run_pipeline(filename: str, anthropic_key: Optional[str] = None, 
                 output_dir: str = "output", existing_kg: Optional[KnowledgeGraph] = None):
     """
     Run the full document ingestion pipeline.
     
     Args:
         filename: Path to the document file
-        openai_key: OpenAI API key (optional, will use environment variable if not provided)
+        anthropic_key: OpenAI API key (optional, will use environment variable if not provided)
         output_dir: Directory to save the knowledge graph
         existing_kg: Optional existing knowledge graph to update
         
@@ -23,9 +23,9 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None,
         Updated knowledge graph
     """
     # Use provided API keys or get from environment
-    openai_key = openai_key or os.environ.get("OPENAI_API_KEY")
+    anthropic_key = anthropic_key or os.environ.get("ANTHROPIC_API_KEY")
     
-    if not openai_key:
+    if not anthropic_key:
         raise ValueError("OpenAI API key not provided and not found in environment variables")
     
     # Create output directory if it doesn't exist
@@ -52,7 +52,7 @@ def run_pipeline(filename: str, openai_key: Optional[str] = None,
         print("Extracting triples using OpenAI...")
         
         # Extract triples from text
-        triples = extract_triples_from_text(raw_text, openai_key, doc_metadata)
+        triples = extract_triples_from_text(raw_text, anthropic_key, doc_metadata)
         print(f"Extracted {len(triples)} triples")
         
         # Create or update knowledge graph

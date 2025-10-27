@@ -22,18 +22,18 @@ def index():
 def process_query():
     data = request.json
     query = data.get('query')
-    openai_key = data.get('openai_key') or os.environ.get('OPENAI_API_KEY')
+    anthropic_key = data.get('anthropic_key') or os.environ.get('ANTHROPIC_API_KEY')
     
     if not query:
         return jsonify({"error": "No query provided"}), 400
     
-    if not openai_key:
+    if not anthropic_key:
         return jsonify({"error": "OpenAI API key required"}), 400
     
     result = orchestrate(
         query=query,
         knowledge_graph=kg,
-        openai_key=openai_key,
+        anthropic_key=anthropic_key,
         run_validation=True
     )
     

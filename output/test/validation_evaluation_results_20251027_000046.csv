@@ -1,0 +1,14 @@
+question_id,question,module_type,trust_score,logical_score,grounding_score,novelty_score,alignment_score,validation_caught_issue,module_confidence
+sec_001,What are the security risks for the ApolloContract?,standard,0.675,1.0,1.0,0.2,0.5,False,0.8
+sec_001,What are the security risks for the ApolloContract?,noisy_logical,0.3,0.0,1.0,0.0,0.2,True,0.95
+sec_001,What are the security risks for the ApolloContract?,noisy_ungrounded,0.5,0.5,0.0,0.5,1.0,True,0.99
+sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,standard,0.675,1.0,1.0,0.2,0.5,False,0.8
+sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,noisy_logical,0.3,0.0,1.0,0.0,0.2,True,0.95
+sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,noisy_ungrounded,0.55,0.5,0.0,0.7,1.0,True,0.99
+plasticity_005,What makes ApolloContract risky from a security perspective?,standard,0.8,1.0,1.0,0.2,1.0,False,0.8
+plasticity_005,What makes ApolloContract risky from a security perspective?,noisy_logical,0.3,0.0,1.0,0.0,0.2,True,0.95
+plasticity_005,What makes ApolloContract risky from a security perspective?,noisy_ungrounded,0.575,0.5,0.0,0.8,1.0,True,0.99
+synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,noisy_logical,0.3,0.0,1.0,0.0,0.2,True,0.95
+synthesis_002,What is the holistic assessment of deploying smart contracts in the current environment?,noisy_ungrounded,0.375,0.5,0.0,0.0,1.0,True,0.99
+fin_004,What is the relationship between contract security and market liquidity?,noisy_logical,0.3,0.0,1.0,0.0,0.2,True,0.95
+fin_004,What is the relationship between contract security and market liquidity?,noisy_ungrounded,0.55,0.5,0.0,0.7,1.0,True,0.99

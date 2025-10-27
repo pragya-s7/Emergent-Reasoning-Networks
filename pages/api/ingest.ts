@@ -28,7 +28,7 @@ export default async function handler(
       try {
         await fs.rename(tempPath, newPath);
 
-        const command = `python3 scripts/main.py --file ${newPath} --openai-key ${fields.openai_key}`;
+        const command = `python3 scripts/main.py --file ${newPath} --anthropic-key ${fields.anthropic_key}`;
         exec(command, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);

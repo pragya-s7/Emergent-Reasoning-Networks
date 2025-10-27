@@ -2,6 +2,7 @@ import importlib
 import os
 import sys
 import datetime
+import re
 from typing import Dict, Any, List, Optional
 from sentence_transformers import SentenceTransformer, util
 
@@ -17,25 +18,25 @@ RM_REGISTRY = {
         "description": "Performs dynamic financial analysis of market behaviors, liquidity, and risk assessment using an LLM.",
         "module": "reasoning_modules.defi_risk.index",
         "function": "run_financial_analysis_rm",
-        "requires_openai": True
+        "requires_anthropic": True
     },
     "security_audit": {
         "description": "Analyzes entities in the knowledge graph against a predefined set of security rules to flag potential risks.",
         "module": "reasoning_modules.audit_rm",
         "class": "SecurityAuditReasoningModule",
-        "requires_openai": False
+        "requires_anthropic": False
     },
     "macro_analysis": {
         "description": "Analyzes local macroeconomic data from a CSV file to identify trends in interest rates and inflation.",
         "module": "reasoning_modules.macro_rm",
         "class": "MacroReasoningModule",
-        "requires_openai": False
+        "requires_anthropic": False
     },
     "corporate_communications": {
         "description": "Analyzes official company announcements from a local JSON file to gauge sentiment and key messages.",
         "module": "reasoning_modules.corporate_communications_rm",
         "class": "CorporateCommunicationsReasoningModule",
-        "requires_openai": False
+        "requires_anthropic": False
     }
 }
 
@@ -44,25 +45,25 @@ VN_REGISTRY = {
     "logical": {
         "module": "validation_nodes.logical_vn",
         "function": "run_logical_vn",
-        "requires_openai": True,
+        "requires_anthropic": True,
         "requires_kg": False
     },
     "grounding": {
         "module": "validation_nodes.grounding_vn",
         "function": "run_grounding_vn",
-        "requires_openai": False,
+        "requires_anthropic": False,
         "requires_kg": True
     },
     "novelty": {
         "module": "validation_nodes.novelty_vn",
         "function": "run_novelty_vn",
-        "requires_openai": True,
+        "requires_anthropic": True,
         "requires_kg": True
     },
     "alignment": {
         "module": "validation_nodes.alignment_vn",
         "function": "run_alignment_vn",
-        "requires_openai": True,
+        "requires_anthropic": True,
         "requires_kg": False
     }
 }
@@ -92,23 +93,20 @@ def apply_hebbian_learning(knowledge_graph: Any, reasoning_output: Dict, validat
     stats = {
         "edges_strengthened": 0,
         "entities_activated": 0,
-        "emergent_edges": 0,
+        "emergent_edges": [],
         "decayed_edges": 0
     }
 
     try:
         # 1. Strengthen edges explicitly used in reasoning (if source_triples provided)
         source_triples = reasoning_output.get("source_triples", [])
+        triple_pattern = re.compile(r"(.*?)\s*--(.+?)-->\s*(.*)")
+
         for triple_str in source_triples:
             try:
-                # Parse triple format: "Subject --predicate--> Object"
-                if "--" in triple_str and "-->" in triple_str:
-                    parts = triple_str.split("--")
-                    subj = parts[0].strip()
-                    pred_obj = parts[1].split("-->")
-                    pred = pred_obj[0].strip()
-                    obj = pred_obj[1].strip() if len(pred_obj) > 1 else ""
-
+                match = triple_pattern.match(triple_str)
+                if match:
+                    subj, pred, obj = [s.strip() for s in match.groups()]
                     if subj and pred and obj:
                         knowledge_graph.activate_relation(subj, pred, obj)
                         stats["edges_strengthened"] += 1
@@ -140,7 +138,7 @@ def apply_hebbian_learning(knowledge_graph: Any, reasoning_output: Dict, validat
         if validation_passed:
             consolidation_result = knowledge_graph.consolidate_memory()
             stats["emergent_edges"] = len(consolidation_result.get("emergent_edges", []))
-            stats["decayed_edges"] = consolidation_result.get("decayed_edges", 0)
+            stats["decayed_edges"] = consolidation_result.get("decayed_edges", [])
 
         if stats["edges_strengthened"] > 0 or stats["entities_activated"] > 0:
             print(f"\n[Hebbian] Learning applied: {stats['edges_strengthened']} edges strengthened, "
@@ -151,7 +149,7 @@ def apply_hebbian_learning(knowledge_graph: Any, reasoning_output: Dict, validat
 
     return stats
 
-def orchestrate_chain(query: str, knowledge_graph: Any, module_chain: List[str], openai_key: Optional[str] = None) -> Dict[str, Any]:
+def orchestrate_chain(query: str, knowledge_graph: Any, module_chain: List[str], anthropic_key: Optional[str] = None) -> Dict[str, Any]:
     """Runs a chain of reasoning modules in sequence."""
     print(f"[Kairos Orchestrator] Running chain: {' -> '.join(module_chain)}")
     
@@ -190,7 +188,7 @@ def orchestrate_chain(query: str, knowledge_graph: Any, module_chain: List[str],
     
     return final_result
 
-def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = None, 
+def orchestrate(query: str, knowledge_graph: Any, anthropic_key: Optional[str] = None, 
                run_validation: bool = True, alignment_profile: Optional[Dict] = None) -> Dict[str, Any]:
     """
     Orchestrate the reasoning process by selecting and running the appropriate reasoning module
@@ -210,7 +208,7 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
 
             print(f"[Kairos Orchestrator] Selected RM: {selected_rm_name}")
             
-            if rm_info.get("requires_openai", False) and not openai_key:
+            if rm_info.get("requires_anthropic", False) and not anthropic_key:
                 raise ValueError(f"The selected reasoning module '{selected_rm_name}' requires an OpenAI API key")
             
             rm_module = importlib.import_module(rm_info["module"])
@@ -221,8 +219,8 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
                 rm_result = rm_instance.run(query, knowledge_graph)
             else:
                 rm_function = getattr(rm_module, rm_info["function"])
-                if rm_info.get("requires_openai", False):
-                    rm_result = rm_function(query, knowledge_graph, openai_key)
+                if rm_info.get("requires_anthropic", False):
+                    rm_result = rm_function(query, knowledge_graph, anthropic_key)
                 else:
                     rm_result = rm_function(query, knowledge_graph)
             
@@ -233,7 +231,7 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
             for vn_name, vn_info in VN_REGISTRY.items():
                 # Check if the VN can be run with the provided arguments
                 can_run = True
-                if vn_info.get("requires_openai", False) and not openai_key:
+                if vn_info.get("requires_anthropic", False) and not anthropic_key:
                     can_run = False
                 
                 if can_run:
@@ -245,8 +243,8 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
                         vn_args = [rm_result]
                         if vn_info.get("requires_kg", False):
                             vn_args.append(knowledge_graph)
-                        if vn_info.get("requires_openai", False):
-                            vn_args.append(openai_key)
+                        if vn_info.get("requires_anthropic", False):
+                            vn_args.append(anthropic_key)
                         
                         if vn_name == "alignment" and alignment_profile:
                             vn_args.append(alignment_profile)
@@ -261,10 +259,17 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
 
         hebbian_stats = apply_hebbian_learning(knowledge_graph, rm_result, validation_results)
 
+        # Compute trust score as average of all validation scores
+        trust_score = 0.0
+        if validation_results:
+            scores = [v.get("score", 0.0) for v in validation_results.values() if isinstance(v, dict) and "score" in v]
+            trust_score = sum(scores) / len(scores) if scores else 0.0
+
         final_result = {
             "reasoning": rm_result,
             "validation": validation_results,
-            "hebbian_plasticity": hebbian_stats
+            "hebbian_plasticity": hebbian_stats,
+            "trust_score": round(trust_score, 3)
         }
 
         return final_result

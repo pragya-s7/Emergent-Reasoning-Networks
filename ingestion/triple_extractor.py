@@ -1,24 +1,24 @@
-import openai
+import anthropic
 import ast
 from datetime import datetime
 from typing import List, Tuple, Dict, Any, Optional
 
 from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 
-def extract_triples_from_text(text: str, openai_key: str, 
+def extract_triples_from_text(text: str, anthropic_key: str, 
                              doc_metadata: Optional[Dict[str, Any]] = None) -> List[Tuple[str, str, str]]:
     """
     Extract subject-predicate-object triples from text using OpenAI.
     
     Args:
         text: The text to extract triples from
-        openai_key: OpenAI API key
+        anthropic_key: OpenAI API key
         doc_metadata: Optional document metadata to include in the prompt
         
     Returns:
         List of (subject, predicate, object) tuples
     """
-    openai.api_key = openai_key
+    anthropic.api_key = anthropic_key
     
     # Include document metadata in the prompt if available
     metadata_str = ""
@@ -40,15 +40,20 @@ Only output valid Python list syntax. No explanations.
 """
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You extract structured triples from text."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        
-        triples_text = response['choices'][0]['message']['content'].strip()
+    client = anthropic.Anthropic(api_key=anthropic_key)
+    response = client.messages.create(
+        model="claude-3-haiku-20240307",
+        max_tokens=4096,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
+    )
+    
+    # Extract the response content
+    response_content = response.content[0].text
         
         try:
             return ast.literal_eval(triples_text)
@@ -61,7 +66,7 @@ Only output valid Python list syntax. No explanations.
         print(f"OpenAI API error: {str(e)}")
         return []
 
-def ingest_triples_into_kg(triples, source="openai", doc_id="unknown", 
+def ingest_triples_into_kg(triples, source="anthropic", doc_id="unknown", 
                           doc_metadata=None) -> KnowledgeGraph:
     """
     Add extracted triples to a knowledge graph.

@@ -12,8 +12,13 @@
     },
     {
       "question": "Are there any Reentrancy or GasLimitVulnerability issues with the ApolloContract?",
-      "expected_conclusion_keywords": ["ApolloContract", "Reentrancy", "GasLimitVulnerability"],
+      "expected_conclusion_keywords": ["ApolloContract", "Reentrancy"],
       "key_triples": ["ApolloContract --has_vulnerability--> Reentrancy"]
+    },
+    {
+      "question": "What if the ApolloContract had a GasLimitVulnerability?",
+      "expected_conclusion_keywords": ["ApolloContract", "GasLimitVulnerability"],
+      "key_triples": []
     }
   ]
 }

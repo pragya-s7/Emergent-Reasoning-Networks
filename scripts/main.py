@@ -11,7 +11,7 @@ from core.knowledge_graph.knowledgeGraph import KnowledgeGraph
 def main():
     parser = argparse.ArgumentParser(description="Kairos Document Ingestion Pipeline")
     parser.add_argument("--file", "-f", required=True, help="Path to document file")
-    parser.add_argument("--openai-key", required=True, help="OpenAI API key")
+    parser.add_argument("--anthropic-key", required=True, help="OpenAI API key")
     parser.add_argument("--output-dir", default="output", help="Output directory")
     parser.add_argument("--update-existing", action="store_true", 
                        help="Update existing knowledge graph instead of creating new one")
@@ -32,7 +32,7 @@ def main():
     # Run the pipeline
     kg = run_pipeline(
         filename=args.file,
-        openai_key=args.openai_key,
+        anthropic_key=args.anthropic_key,
         output_dir=args.output_dir,
         existing_kg=existing_kg
     )

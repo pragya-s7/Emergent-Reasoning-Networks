@@ -15,7 +15,7 @@ def main():
     parser.add_argument("--query", "-q", required=True, help="Query to process")
     parser.add_argument("--kg-path", default="output/knowledge_graph.json", 
                         help="Path to knowledge graph JSON file")
-    parser.add_argument("--openai-key", help="OpenAI API key (or set OPENAI_API_KEY env var)")
+    parser.add_argument("--anthropic-key", help="OpenAI API key (or set ANTHROPIC_API_KEY env var)")
     parser.add_argument("--no-validation", action="store_true", 
                         help="Skip validation nodes")
     parser.add_argument("--output", "-o", help="Output file for results (JSON)")
@@ -23,8 +23,8 @@ def main():
     args = parser.parse_args()
     
     # Get OpenAI key from args or environment
-    openai_key = args.openai_key or os.environ.get("OPENAI_API_KEY")
-    if not openai_key:
+    anthropic_key = args.anthropic_key or os.environ.get("ANTHROPIC_API_KEY")
+    if not anthropic_key:
         print("Warning: No OpenAI API key provided. Some features may not work.")
     
     # Load knowledge graph
@@ -37,7 +37,7 @@ def main():
     result = orchestrate(
         query=args.query,
         knowledge_graph=kg,
-        openai_key=openai_key,
+        anthropic_key=anthropic_key,
         run_validation=not args.no_validation
     )
     

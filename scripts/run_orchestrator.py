@@ -20,7 +20,7 @@ def main():
     parser.add_argument('--query', type=str, required=True, help='User query')
     parser.add_argument('--kg-path', type=str, default='output/knowledge_graph.json',
                        help='Path to knowledge graph JSON file')
-    parser.add_argument('--openai-key', type=str, help='OpenAI API key')
+    parser.add_argument('--anthropic-key', type=str, help='OpenAI API key')
     parser.add_argument('--run-validation', action='store_true',
                        help='Run validation nodes')
     parser.add_argument('--alignment-profile', type=str,
@@ -50,7 +50,7 @@ def main():
         result = orchestrate(
             query=args.query,
             knowledge_graph=kg,
-            openai_key=args.openai_key,
+            anthropic_key=args.anthropic_key,
             run_validation=args.run_validation,
             alignment_profile=alignment_profile
         )
