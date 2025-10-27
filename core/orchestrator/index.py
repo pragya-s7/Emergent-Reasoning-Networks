@@ -71,6 +71,88 @@ rm_names = list(RM_REGISTRY.keys())
 rm_texts = [RM_REGISTRY[name]["description"] for name in rm_names]
 rm_embeddings = model.encode(rm_texts, convert_to_tensor=True)
 
+def apply_hebbian_learning(knowledge_graph: Any, reasoning_output: Dict, validation_results: Dict) -> Dict:
+    """
+    Apply Hebbian plasticity to the knowledge graph based on reasoning patterns.
+
+    Implements three types of learning:
+    1. Edge strengthening: Edges used in reasoning get stronger
+    2. Entity co-activation: Track concepts that appear together
+    3. Memory consolidation: Form emergent connections and apply decay
+
+    Args:
+        knowledge_graph: KnowledgeGraph instance
+        reasoning_output: Output from reasoning module
+        validation_results: Output from validation nodes
+
+    Returns:
+        Dictionary with plasticity statistics
+    """
+    stats = {
+        "edges_strengthened": 0,
+        "entities_activated": 0,
+        "emergent_edges": 0,
+        "decayed_edges": 0
+    }
+
+    try:
+        # 1. Strengthen edges explicitly used in reasoning (if source_triples provided)
+        source_triples = reasoning_output.get("source_triples", [])
+        for triple_str in source_triples:
+            try:
+                # Parse triple format: "Subject --predicate--> Object"
+                if "--" in triple_str and "-->" in triple_str:
+                    parts = triple_str.split("--")
+                    subj = parts[0].strip()
+                    pred_obj = parts[1].split("-->")
+                    pred = pred_obj[0].strip()
+                    obj = pred_obj[1].strip() if len(pred_obj) > 1 else ""
+
+                    if subj and pred and obj:
+                        knowledge_graph.activate_relation(subj, pred, obj)
+                        stats["edges_strengthened"] += 1
+            except Exception as e:
+                print(f"[Hebbian] Failed to parse triple: {triple_str} - {e}")
+
+        # 2. Track entity co-activations from reasoning context
+        # Extract all entities mentioned in reasoning path
+        activated_entities = set()
+
+        if "reasoningPath" in reasoning_output:
+            for step in reasoning_output["reasoningPath"]:
+                # Extract entity references from step data
+                step_data = step.get("data", "") + " " + step.get("inference", "")
+                # Simple heuristic: collect entity labels that appear in KG
+                for entity_label in knowledge_graph.label_to_id.keys():
+                    if entity_label in step_data:
+                        activated_entities.add(entity_label)
+
+        if activated_entities:
+            knowledge_graph.activate_entities(list(activated_entities))
+            stats["entities_activated"] = len(activated_entities)
+
+        # 3. Periodically consolidate memory (form emergent edges and decay)
+        # Only do this if validation passed (to avoid reinforcing bad reasoning)
+        validation_passed = all(
+            v.get("valid", False) for v in validation_results.values()
+            if isinstance(v, dict)
+        )
+
+        if validation_passed:
+            consolidation_result = knowledge_graph.consolidate_memory()
+            stats["emergent_edges"] = len(consolidation_result.get("emergent_edges", []))
+            stats["decayed_edges"] = consolidation_result.get("decayed_edges", 0)
+
+        # Log summary
+        if stats["edges_strengthened"] > 0 or stats["entities_activated"] > 0:
+            print(f"\n[Hebbian] Learning applied: {stats['edges_strengthened']} edges strengthened, "
+                  f"{stats['entities_activated']} entities activated")
+
+    except Exception as e:
+        print(f"[Hebbian] Error during plasticity application: {str(e)}")
+
+    return stats
+
 def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = None, 
                run_validation: bool = True, alignment_profile: Optional[Dict] = None) -> Dict[str, Any]:
     """
@@ -151,12 +233,17 @@ def orchestrate(query: str, knowledge_graph: Any, openai_key: Optional[str] = No
                         "feedback": f"Error: {str(e)}"
                     }
         
+        # ==================== HEBBIAN PLASTICITY INTEGRATION ====================
+        # Apply Hebbian learning: strengthen edges used in reasoning
+        hebbian_stats = apply_hebbian_learning(knowledge_graph, rm_result, validation_results)
+
         # Combine results
         final_result = {
             "reasoning": rm_result,
-            "validation": validation_results
+            "validation": validation_results,
+            "hebbian_plasticity": hebbian_stats  # Include plasticity stats in response
         }
-        
+
         return final_result
         
     except Exception as e:

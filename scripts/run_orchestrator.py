@@ -55,6 +55,15 @@ def main():
             alignment_profile=alignment_profile
         )
 
+        # Save updated KG with Hebbian changes (if file path exists)
+        if os.path.exists(args.kg_path):
+            try:
+                kg.save_to_json(args.kg_path)
+                print(f"[KG] Saved updated knowledge graph with Hebbian changes to {args.kg_path}",
+                      file=sys.stderr)
+            except Exception as e:
+                print(f"[KG] Warning: Failed to save updated KG: {str(e)}", file=sys.stderr)
+
         # Output result as JSON
         print(json.dumps(result, indent=2))
         sys.exit(0)

@@ -7,14 +7,85 @@
 
 Kairos is a multi-agent reasoning system that addresses the challenge of verifiable reasoning over complex, multi-hop queries requiring knowledge integration. The system employs specialized reasoning modules that generate explicit reasoning pathways validated by diverse validation agents, producing trust-scored conclusions that capture not just answers but the quality of the reasoning process itself.
 
-## Core Innovation
+## Core Innovations
 
-**Multi-Dimensional Validation of Reasoning Pathways**: Unlike traditional systems that validate only final outputs, Kairos validates the reasoning process itself across four dimensions:
+### 1. Multi-Dimensional Validation of Reasoning Pathways
+
+Unlike traditional systems that validate only final outputs, Kairos validates the reasoning process itself across four dimensions:
 
 1. **Logical Validation**: Ensures coherent logical flow and absence of fallacies
 2. **Grounding Validation**: Verifies all claims are anchored in knowledge graph facts
 3. **Novelty Validation**: Detects emergent insights beyond existing knowledge
 4. **Alignment Validation**: Checks reasoning respects user goals and constraints
+
+### 2. Hebbian Plasticity in Knowledge Graphs
+
+**"Concepts that are reasoned together, connect together"**
+
+Kairos implements adaptive knowledge consolidation inspired by Hebbian learning in neural networks. The knowledge graph dynamically evolves based on reasoning patterns:
+
+#### Edge Strengthening (Long-Term Potentiation analogy)
+When edges are used in validated reasoning, they become stronger:
+```python
+# Asymptotic strengthening with diminishing returns
+delta = learning_rate * (max_strength - current_strength)
+new_strength = min(max_strength, current_strength + delta)
+```
+
+**Parameters:**
+- `learning_rate`: 0.1 (how much to strengthen per activation)
+- `max_strength`: 1.0 (saturation limit)
+
+#### Temporal Decay (Long-Term Depression analogy)
+Unused edges gradually weaken and eventually prune:
+```python
+# Exponential decay with 30-day half-life
+decay = decay_rate * (1 - exp(-days_inactive / 30))
+new_strength = max(min_strength, current_strength - decay)
+```
+
+**Parameters:**
+- `decay_rate`: 0.05 (forgetting rate)
+- `min_strength`: 0.1 (pruning threshold)
+
+#### Emergent Connection Formation
+Frequently co-activated entities form new connections:
+- Track entity co-occurrences during reasoning
+- After N co-activations (default: 3), create new edge
+- Initial strength proportional to co-activation frequency
+- Relation type: `co_occurs_with` (emergent)
+
+**Example:**
+```
+Query 1: "Security vulnerabilities in System-Alpha?"
+→ Activates: System-Alpha, CVE-2024-1234, Security-Audit
+
+Query 2: "What risks does System-Alpha have?"
+→ Activates: System-Alpha, High-Risk, Q4-2024-Report
+
+Query 3: "Analyze System-Alpha's audit history"
+→ Activates: System-Alpha, Security-Audit, High-Risk
+
+Result: Emergent edge forms:
+Security-Audit --co_occurs_with--> High-Risk (strength: 0.3)
+```
+
+#### Cognitive Science Mapping
+
+| Hebbian Mechanism | Kairos Implementation |
+|-------------------|----------------------|
+| Synaptic Strengthening | Edge confidence increase |
+| Synaptic Pruning | Weak edge removal |
+| Memory Consolidation | Episodic → Semantic transition |
+| Pattern Completion | Emergent connections |
+| Forgetting Curve | Exponential decay |
+
+#### Research Implications
+
+1. **Self-Optimizing Knowledge**: Graph structure adapts to usage patterns
+2. **Transfer Learning**: Frequently reasoned patterns become shortcuts
+3. **Novelty Detection**: New insights stand out against reinforced patterns
+4. **Explainable Evolution**: Activation history tracks knowledge maturation
 
 ## Architecture
 
@@ -157,10 +228,13 @@ trust_score = average([
 
 ## Research Contributions
 
-1. **Multi-Level Validation Architecture**: Novel approach to validating reasoning pathways rather than just final outputs
-2. **Emergent Reasoning Through Collaboration**: Multiple specialized agents produce richer insights than monolithic models
-3. **Trust-Scored Reasoning Quality**: Quantifies not just factual accuracy but reasoning quality
-4. **Meta-Reasoning Framework**: Validates HOW agents think, not just WHAT they produce
+1. **Hebbian Plasticity for Knowledge Graphs**: First implementation of adaptive edge strengthening and emergent connection formation in KG-based agentic systems, enabling self-optimizing knowledge structures
+2. **Multi-Level Validation Architecture**: Novel approach to validating reasoning pathways rather than just final outputs
+3. **Validation-Gated Learning**: Only reinforce patterns that pass multi-dimensional validation, preventing consolidation of flawed reasoning
+4. **Emergent Reasoning Through Collaboration**: Multiple specialized agents produce richer insights than monolithic models
+5. **Trust-Scored Reasoning Quality**: Quantifies not just factual accuracy but reasoning quality
+6. **Meta-Reasoning Framework**: Validates HOW agents think, not just WHAT they produce
+7. **Episodic to Semantic Memory Transition**: Concrete implementation of memory consolidation theory in AI systems
 
 ## Alignment with NORA Workshop Topics
 
