@@ -1,0 +1,6 @@
+ablation_condition,question_id,question,trust_score,logical_score,grounding_score,novelty_score,alignment_score,conclusion_length,reasoning_steps,hebbian_edges_strengthened,hebbian_emergent_edges
+full_system,sec_001,What are the security risks for the ApolloContract?,0.625,1.0,1.0,0.0,0.5,188,2,1,0
+full_system,sec_006,What is the risk assessment for contracts with Reentrancy vulnerabilities that haven't been audited?,0.7,1.0,1.0,0.5,0.3,188,2,1,0
+full_system,plasticity_005,What makes ApolloContract risky from a security perspective?,0.6,0.9,1.0,0.2,0.3,188,2,1,0
+full_system,confidence_001,How confident can we be about ApolloContract's security status?,0.75,1.0,1.0,0.8,0.2,188,2,1,0
+full_system,plasticity_002,Tell me about ApolloContract's vulnerabilities,0.675,1.0,1.0,0.2,0.5,188,2,1,0

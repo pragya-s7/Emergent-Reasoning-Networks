@@ -1,0 +1,51 @@
+question_id,question,baseline_type,trust_score,latency,conclusion_length,reasoning_steps,has_conclusion
+macro_001,What macroeconomic factors does the system analyze?,kairos_full,0.75,4.311241865158081,101,2,True
+macro_001,What macroeconomic factors does the system analyze?,naive_kg,0.0,0.0003592967987060547,23,1,True
+macro_001,What macroeconomic factors does the system analyze?,single_agent,0.0,1.3954501152038574,141,2,True
+macro_001,What macroeconomic factors does the system analyze?,no_validation,0.0,0.30562520027160645,101,2,True
+macro_001,What macroeconomic factors does the system analyze?,no_hebbian,0.75,19.93855905532837,101,2,True
+grounding_003,What is ApolloContract's market capitalization?,kairos_full,0.8,47.698529958724976,0,0,False
+grounding_003,What is ApolloContract's market capitalization?,naive_kg,0.0,0.00018596649169921875,61,1,True
+grounding_003,What is ApolloContract's market capitalization?,single_agent,0.0,12.630031824111938,128,3,True
+grounding_003,What is ApolloContract's market capitalization?,no_validation,0.0,11.885565996170044,0,0,False
+grounding_003,What is ApolloContract's market capitalization?,no_hebbian,0.75,47.51842284202576,0,0,False
+macro_002,How are economic indicators tracked in the knowledge graph?,kairos_full,0.825,35.75098133087158,188,2,True
+macro_002,How are economic indicators tracked in the knowledge graph?,naive_kg,0.0,0.0001609325408935547,23,1,True
+macro_002,How are economic indicators tracked in the knowledge graph?,single_agent,0.0,12.504703044891357,167,3,True
+macro_002,How are economic indicators tracked in the knowledge graph?,no_validation,0.0,0.36383605003356934,188,2,True
+macro_002,How are economic indicators tracked in the knowledge graph?,no_hebbian,0.625,35.23169684410095,188,2,True
+plasticity_005,What makes ApolloContract risky from a security perspective?,kairos_full,0.625,35.82575798034668,188,2,True
+plasticity_005,What makes ApolloContract risky from a security perspective?,naive_kg,0.0,0.00010609626770019531,61,1,True
+plasticity_005,What makes ApolloContract risky from a security perspective?,single_agent,0.0,12.993870973587036,397,3,True
+plasticity_005,What makes ApolloContract risky from a security perspective?,no_validation,0.0,0.37042880058288574,188,2,True
+plasticity_005,What makes ApolloContract risky from a security perspective?,no_hebbian,0.825,34.851922035217285,188,2,True
+sec_001,What are the security risks for the ApolloContract?,kairos_full,0.775,35.677765130996704,188,2,True
+sec_001,What are the security risks for the ApolloContract?,naive_kg,0.0,0.00011420249938964844,61,1,True
+sec_001,What are the security risks for the ApolloContract?,single_agent,0.0,12.837510824203491,253,3,True
+sec_001,What are the security risks for the ApolloContract?,no_validation,0.0,0.32158398628234863,188,2,True
+sec_001,What are the security risks for the ApolloContract?,no_hebbian,0.825,34.9627571105957,188,2,True
+grounding_001,Does ApolloContract have a SQL injection vulnerability?,kairos_full,0.75,36.02090311050415,188,2,True
+grounding_001,Does ApolloContract have a SQL injection vulnerability?,naive_kg,0.0,8.988380432128906e-05,61,1,True
+grounding_001,Does ApolloContract have a SQL injection vulnerability?,single_agent,0.0,13.323347091674805,148,2,True
+grounding_001,Does ApolloContract have a SQL injection vulnerability?,no_validation,0.0,0.38385605812072754,188,2,True
+grounding_001,Does ApolloContract have a SQL injection vulnerability?,no_hebbian,0.875,34.944031953811646,188,2,True
+alignment_001,What is the most transparent assessment of ApolloContract's security?,kairos_full,0.55,35.33558773994446,188,2,True
+alignment_001,What is the most transparent assessment of ApolloContract's security?,naive_kg,0.0,0.0001652240753173828,61,1,True
+alignment_001,What is the most transparent assessment of ApolloContract's security?,single_agent,0.0,13.129623889923096,214,5,True
+alignment_001,What is the most transparent assessment of ApolloContract's security?,no_validation,0.0,0.5067601203918457,188,2,True
+alignment_001,What is the most transparent assessment of ApolloContract's security?,no_hebbian,0.75,34.29965305328369,188,2,True
+plasticity_001,What security issues affect ApolloContract?,kairos_full,0.675,37.158347845077515,188,2,True
+plasticity_001,What security issues affect ApolloContract?,naive_kg,0.0,0.00018095970153808594,61,1,True
+plasticity_001,What security issues affect ApolloContract?,single_agent,0.0,11.38618803024292,253,2,True
+plasticity_001,What security issues affect ApolloContract?,no_validation,0.0,0.44866299629211426,188,2,True
+plasticity_001,What security issues affect ApolloContract?,no_hebbian,0.925,35.68938493728638,188,2,True
+grounding_002,Has ApolloContract been certified by the SEC?,kairos_full,0.675,37.67052173614502,188,2,True
+grounding_002,Has ApolloContract been certified by the SEC?,naive_kg,0.0,0.0001468658447265625,61,1,True
+grounding_002,Has ApolloContract been certified by the SEC?,single_agent,0.0,10.741122961044312,293,3,True
+grounding_002,Has ApolloContract been certified by the SEC?,no_validation,0.0,0.38109588623046875,188,2,True
+grounding_002,Has ApolloContract been certified by the SEC?,no_hebbian,0.925,34.618520975112915,188,2,True
+aggregation_001,What is the total count of security vulnerabilities across all contracts?,kairos_full,0.825,36.49806833267212,188,2,True
+aggregation_001,What is the total count of security vulnerabilities across all contracts?,naive_kg,0.0,0.00010609626770019531,23,1,True
+aggregation_001,What is the total count of security vulnerabilities across all contracts?,single_agent,0.0,12.077022790908813,70,2,True
+aggregation_001,What is the total count of security vulnerabilities across all contracts?,no_validation,0.0,0.4410829544067383,188,2,True
+aggregation_001,What is the total count of security vulnerabilities across all contracts?,no_hebbian,0.625,34.90409183502197,188,2,True

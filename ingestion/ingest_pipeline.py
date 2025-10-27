@@ -15,7 +15,7 @@ def run_pipeline(filename: str, anthropic_key: Optional[str] = None,
     
     Args:
         filename: Path to the document file
-        anthropic_key: OpenAI API key (optional, will use environment variable if not provided)
+        anthropic_key: Anthropic API key (optional, will use environment variable if not provided)
         output_dir: Directory to save the knowledge graph
         existing_kg: Optional existing knowledge graph to update
         
