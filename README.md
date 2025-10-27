@@ -7,6 +7,8 @@
 
 Kairos is a multi-agent reasoning system that addresses the challenge of verifiable reasoning over complex, multi-hop queries requiring knowledge integration. The system employs specialized reasoning modules that generate explicit reasoning pathways validated by diverse validation agents, producing trust-scored conclusions that capture not just answers but the quality of the reasoning process itself.
 
+![Example Image](Kairos (1).png)
+
 ## Core Innovations
 
 ### 1. Multi-Dimensional Validation of Reasoning Pathways
