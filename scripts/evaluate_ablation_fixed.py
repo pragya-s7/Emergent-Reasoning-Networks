@@ -197,7 +197,20 @@ def main():
                     alignment_score = validation.get("alignment", {}).get("score", 0.0) if "alignment" in validation else 0.0
 
                     conclusion = reasoning.get("conclusion", "")
+                    if conclusion is None:
+                        conclusion = ""
+
                     reasoning_path = reasoning.get("reasoningPath", [])
+                    if not hasattr(reasoning_path, "__len__"):
+                        reasoning_path = []
+
+                    emergent_edges = hebbian.get("emergent_edges", [])
+                    if isinstance(emergent_edges, int):
+                        emergent_edges_count = max(emergent_edges, 0)
+                    elif hasattr(emergent_edges, "__len__"):
+                        emergent_edges_count = len(emergent_edges)
+                    else:
+                        emergent_edges_count = 0
 
                     writer.writerow({
                         'ablation_condition': condition,
@@ -211,7 +224,7 @@ def main():
                         'conclusion_length': len(conclusion),
                         'reasoning_steps': len(reasoning_path),
                         'hebbian_edges_strengthened': hebbian.get("edges_strengthened", 0),
-                        'hebbian_emergent_edges': len(hebbian.get("emergent_edges", []))
+                        'hebbian_emergent_edges': emergent_edges_count
                     })
 
                     print(f"  Trust score: {trust_score:.3f}")
