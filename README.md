@@ -39,16 +39,19 @@ new_strength = min(max_strength, current_strength + delta)
 - `max_strength`: 1.0 (saturation limit)
 
 #### Temporal Decay (Long-Term Depression analogy)
-Unused edges gradually weaken and eventually prune:
+Unused edges gradually weaken based on reasoning cycles (not wall-clock time):
 ```python
-# Exponential decay with 30-day half-life
-decay = decay_rate * (1 - exp(-days_inactive / 30))
+# Exponential decay with 5-cycle characteristic length
+decay = decay_rate * (1 - exp(-cycles_inactive / 5))
 new_strength = max(min_strength, current_strength - decay)
 ```
 
 **Parameters:**
 - `decay_rate`: 0.05 (forgetting rate)
 - `min_strength`: 0.1 (pruning threshold)
+- `cycles_inactive`: Number of reasoning episodes since edge was last traversed
+
+**Rationale:** Decay based on usage patterns (reasoning cycles), not absolute time. An edge unused for 5 reasoning cycles decays the same whether those cycles happened over 1 day or 1 month.
 
 #### Emergent Connection Formation
 Frequently co-activated entities form new connections:

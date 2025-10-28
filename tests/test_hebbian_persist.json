@@ -1,13 +1,13 @@
 {
   "entities": [
     {
-      "id": "77e53fb8-02a0-4e0c-aa09-69c76703e7af",
+      "id": "8bb5d7b5-a8d4-4207-bdb7-065192f7263f",
       "label": "A",
       "type": "Thing",
       "properties": {}
     },
     {
-      "id": "cf8a88a2-d21a-4ead-8c06-61f42fd8503a",
+      "id": "eec65eaa-b571-4e12-9c9b-1e5791493af3",
       "label": "B",
       "type": "Thing",
       "properties": {}
@@ -15,16 +15,16 @@
   ],
   "relations": [
     {
-      "subject_id": "77e53fb8-02a0-4e0c-aa09-69c76703e7af",
+      "subject_id": "8bb5d7b5-a8d4-4207-bdb7-065192f7263f",
       "predicate": "links",
-      "object_id": "cf8a88a2-d21a-4ead-8c06-61f42fd8503a",
+      "object_id": "eec65eaa-b571-4e12-9c9b-1e5791493af3",
       "confidence": 0.64,
-      "created_at": "2025-10-27T01:02:27.625146",
+      "created_at": "2025-10-28T03:21:34.446717",
       "source": null,
       "version": null,
       "metadata": {},
       "activation_count": 1,
-      "last_activated": "2025-10-27T01:02:27.625150"
+      "cycles_since_last_activation": 0
     }
   ],
   "hebbian_config": {
@@ -35,6 +35,6 @@
     "max_strength": 1.0
   },
   "coactivation_counts": {
-    "77e53fb8-02a0-4e0c-aa09-69c76703e7af_cf8a88a2-d21a-4ead-8c06-61f42fd8503a": 3
+    "8bb5d7b5-a8d4-4207-bdb7-065192f7263f_eec65eaa-b571-4e12-9c9b-1e5791493af3": 3
   }
 }

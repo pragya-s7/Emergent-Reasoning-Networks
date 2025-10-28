@@ -6,6 +6,7 @@ Tests KnowledgeGraph, Hebbian plasticity, and orchestrator logic.
 
 import sys
 import os
+import math
 from datetime import datetime, timedelta
 
 # Add project root to path
@@ -93,9 +94,9 @@ def test_edge_strengthening():
 
 
 def test_temporal_decay():
-    """Test temporal decay of unused edges."""
+    """Test temporal decay of unused edges (cycle-based)."""
     print("\n" + "="*60)
-    print("TEST 3: Temporal Decay (LTD / Forgetting)")
+    print("TEST 3: Temporal Decay (LTD / Forgetting) - Cycle-Based")
     print("="*60)
 
     kg = KnowledgeGraph()
@@ -108,24 +109,31 @@ def test_temporal_decay():
     initial_strength = kg.get_edge_strength("Concept-A", "relates_to", "Concept-B")
     print(f"Initial strength (after activation): {initial_strength:.3f}")
 
-    # Manually set last_activated to simulate time passing
+    # Simulate cycles of inactivity by manually setting cycles_since_last_activation
     for rel in kg.relations:
         if (rel.subject_id == kg.label_to_id["Concept-A"] and
             rel.object_id == kg.label_to_id["Concept-B"]):
-            # Simulate 60 days of inactivity
-            old_date = datetime.utcnow() - timedelta(days=60)
-            rel.last_activated = old_date.isoformat()
-            print(f"Simulated 60 days of inactivity")
+            # simulate 5 reasoning cycles of inactivity
+            rel.cycles_since_last_activation = 5
+            print(f"Simulated 5 reasoning cycles of inactivity")
             break
 
     # Apply decay
     decayed = kg.apply_temporal_decay()
     new_strength = kg.get_edge_strength("Concept-A", "relates_to", "Concept-B")
 
-    print(f"After 60 days decay: {new_strength:.3f} (Δ = -{initial_strength - new_strength:.3f})")
+    print(f"After 5 cycles decay: {new_strength:.3f} (Δ = -{initial_strength - new_strength:.3f})")
+    
+    # expected decay: 0.05 * (1 - exp(-5/5)) = 0.05 * (1 - exp(-1)) ≈ 0.05 * 0.632 ≈ 0.0316
+    expected_decay = 0.05 * (1 - math.exp(-1))
+    print(f"Expected decay: ≈{expected_decay:.4f}")
 
     assert new_strength < initial_strength, "Unused edge should weaken"
     assert new_strength >= kg.hebbian_config["min_strength"], "Should not fall below min"
+    
+    # verify decay is approximately correct (within 10%)
+    actual_decay = initial_strength - new_strength
+    assert abs(actual_decay - expected_decay) < 0.01, f"Decay should be close to expected: {actual_decay:.4f} vs {expected_decay:.4f}"
 
     print("✅ Temporal decay working correctly!")
 
@@ -133,9 +141,8 @@ def test_temporal_decay():
     print("\nTesting edge pruning...")
     for rel in kg.relations:
         if (rel.subject_id == kg.label_to_id["Concept-A"]):
-            # Simulate very old inactivity
-            old_date = datetime.utcnow() - timedelta(days=365)
-            rel.last_activated = old_date.isoformat()
+            # simulate many cycles of inactivity
+            rel.cycles_since_last_activation = 50
             rel.confidence = 0.05  # Below threshold
             print(f"Set edge to very weak: {rel.confidence:.3f}")
             break
@@ -234,11 +241,10 @@ def test_memory_consolidation():
     kg.activate_relation("Alpha", "connects_to", "Beta")
     kg.activate_relation("Beta", "connects_to", "Gamma")
 
-    # Simulate old unused edge
+    # Simulate old unused edge (many cycles of inactivity)
     for rel in kg.relations:
         if rel.subject_id == kg.label_to_id.get("Old"):
-            old_date = datetime.utcnow() - timedelta(days=180)
-            rel.last_activated = old_date.isoformat()
+            rel.cycles_since_last_activation = 20  # 20 cycles of inactivity
 
     # Create co-activations between unconnected entities
     # Alpha and Gamma are connected through Beta but not directly
@@ -455,7 +461,7 @@ def test_persistence_with_hebbian_data():
         if rel.subject_id == kg2.label_to_id["A"]:
             loaded_activation_count = rel.activation_count
             print(f"Loaded edge A --links--> B: {loaded_activation_count} activations")
-            assert rel.last_activated is not None, "last_activated should persist"
+            assert rel.cycles_since_last_activation is not None, "cycles_since_last_activation should persist"
             break
 
     assert activation_count == loaded_activation_count, "Activation count should persist"

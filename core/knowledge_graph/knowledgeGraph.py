@@ -63,6 +63,12 @@ class Relation:
 
     @staticmethod
     def from_dict(data):
+        # backwards compatibility: convert old last_activated to cycles_since_last_activation
+        cycles = data.get("cycles_since_last_activation")
+        if cycles is None and data.get("last_activated") is not None:
+            # if loading old format, set to 0 (just activated)
+            cycles = 0
+        
         return Relation(
             subject_id=data["subject_id"],
             predicate=data["predicate"],
@@ -73,7 +79,7 @@ class Relation:
             version=data.get("version"),
             metadata=data.get("metadata", {}),
             activation_count=data.get("activation_count", 0),
-            last_activated=data.get("last_activated")
+            cycles_since_last_activation=cycles
         )
 
 
@@ -148,9 +154,9 @@ class KnowledgeGraph:
                 delta = learning_rate * (max_strength - rel.confidence)
                 rel.confidence = min(max_strength, rel.confidence + delta)
 
-                # Update activation tracking
+                # Update activation tracking - reset cycle counter (edge was just used)
                 rel.activation_count += 1
-                rel.last_activated = datetime.utcnow().isoformat()
+                rel.cycles_since_last_activation = 0
 
                 print(f"[Hebbian] Strengthened: {subject_label} --{predicate}--> {object_label} "
                       f"(strength: {rel.confidence:.3f}, activations: {rel.activation_count})")
@@ -233,12 +239,24 @@ class KnowledgeGraph:
 
         return new_edges
 
+    def increment_cycle_counters(self):
+        """
+        Increment the cycle counter for all edges that have been activated at least once.
+        Should be called at the start of each reasoning cycle.
+        """
+        for rel in self.relations:
+            if rel.cycles_since_last_activation is not None:
+                rel.cycles_since_last_activation += 1
+
     def apply_temporal_decay(self):
         """
-        Hebbian decay: Unused edges weaken over time.
+        Hebbian decay: Unused edges weaken based on reasoning cycles of inactivity.
         Implements Long-Term Depression (LTD) analogy and forgetting.
+        
+        Edges decay based on cycles_since_last_activation rather than wall-clock time.
+        This means an edge unused for 5 reasoning cycles decays the same whether
+        those cycles happened over 1 day or 1 month.
         """
-        now = datetime.utcnow()
         decay_rate = self.hebbian_config["decay_rate"]
         min_strength = self.hebbian_config["min_strength"]
 
@@ -247,18 +265,16 @@ class KnowledgeGraph:
 
         for rel in self.relations:
             # Skip edges that were never activated (from initial data)
-            if rel.last_activated is None:
+            if rel.cycles_since_last_activation is None:
                 continue
 
-            # Calculate time since last activation
-            last_active = datetime.fromisoformat(rel.last_activated)
-            days_inactive = (now - last_active).days
+            cycles_inactive = rel.cycles_since_last_activation
 
-            # Decay based on inactivity (exponential decay)
-            if days_inactive > 0:
-                decay = decay_rate * (1 - math.exp(-days_inactive / 30))  # 30-day half-life
+            # Decay based on cycle inactivity (exponential decay with 5-cycle lambda)
+            if cycles_inactive > 0:
+                decay = decay_rate * (1 - math.exp(-cycles_inactive / 5))  # 5-cycle characteristic length
                 old_strength = rel.confidence
-                rel.confidence = rel.confidence - decay  # Don't floor here, let pruning handle it
+                rel.confidence = rel.confidence - decay
 
                 if rel.confidence > min_strength:
                     decayed.append((
@@ -271,7 +287,7 @@ class KnowledgeGraph:
 
         # Prune very weak edges
         self.relations = [rel for rel in self.relations
-                          if rel.confidence >= min_strength or rel.last_activated is None]
+                          if rel.confidence >= min_strength or rel.cycles_since_last_activation is None]
 
         if decayed:
             print(f"[Hebbian] Decayed {len(decayed)} edges")

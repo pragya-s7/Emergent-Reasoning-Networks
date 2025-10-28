@@ -1,19 +1,19 @@
 {
   "entities": [
     {
-      "id": "bf95674c-1f43-4622-9970-682929b9212a",
+      "id": "9e0fe806-dc2b-4fba-832e-c4f91ef8fc36",
       "label": "Alice",
       "type": "Person",
       "properties": {}
     },
     {
-      "id": "68fd2b55-fc40-4057-9c07-37a1053a7cec",
+      "id": "c3c4ce32-33c8-41de-8f68-8be63c6db387",
       "label": "Bob",
       "type": "Person",
       "properties": {}
     },
     {
-      "id": "3bbb71d4-c3fe-4ef8-a0f0-340a4380bf4e",
+      "id": "0c6a326b-b2d0-4330-bfca-52afd84d9ac2",
       "label": "TechCorp",
       "type": "Company",
       "properties": {}
@@ -21,40 +21,40 @@
   ],
   "relations": [
     {
-      "subject_id": "bf95674c-1f43-4622-9970-682929b9212a",
+      "subject_id": "9e0fe806-dc2b-4fba-832e-c4f91ef8fc36",
       "predicate": "knows",
-      "object_id": "68fd2b55-fc40-4057-9c07-37a1053a7cec",
+      "object_id": "c3c4ce32-33c8-41de-8f68-8be63c6db387",
       "confidence": 1.0,
-      "created_at": "2025-10-27T01:02:27.618286",
+      "created_at": "2025-10-28T03:21:34.407462",
       "source": null,
       "version": null,
       "metadata": {},
       "activation_count": 0,
-      "last_activated": null
+      "cycles_since_last_activation": null
     },
     {
-      "subject_id": "bf95674c-1f43-4622-9970-682929b9212a",
+      "subject_id": "9e0fe806-dc2b-4fba-832e-c4f91ef8fc36",
       "predicate": "works_at",
-      "object_id": "3bbb71d4-c3fe-4ef8-a0f0-340a4380bf4e",
+      "object_id": "0c6a326b-b2d0-4330-bfca-52afd84d9ac2",
       "confidence": 1.0,
-      "created_at": "2025-10-27T01:02:27.618847",
+      "created_at": "2025-10-28T03:21:34.407462",
       "source": null,
       "version": null,
       "metadata": {},
       "activation_count": 0,
-      "last_activated": null
+      "cycles_since_last_activation": null
     },
     {
-      "subject_id": "68fd2b55-fc40-4057-9c07-37a1053a7cec",
+      "subject_id": "c3c4ce32-33c8-41de-8f68-8be63c6db387",
       "predicate": "works_at",
-      "object_id": "3bbb71d4-c3fe-4ef8-a0f0-340a4380bf4e",
+      "object_id": "0c6a326b-b2d0-4330-bfca-52afd84d9ac2",
       "confidence": 1.0,
-      "created_at": "2025-10-27T01:02:27.618853",
+      "created_at": "2025-10-28T03:21:34.407462",
       "source": null,
       "version": null,
       "metadata": {},
       "activation_count": 0,
-      "last_activated": null
+      "cycles_since_last_activation": null
     }
   ],
   "hebbian_config": {

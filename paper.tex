@@ -210,10 +210,10 @@ where $\eta = 0.1$ is the learning rate and $\text{max\_strength} = 1.0$. This f
 
 \subsubsection{Temporal Decay: Long-Term Depression Analog}
 
-Edges not traversed during reasoning gradually weaken via temporal decay, analogous to synaptic depression~\citep{squire2015memory}. We implement exponential decay with a 30-day half-life:
+Edges not traversed during reasoning gradually weaken via temporal decay, analogous to synaptic depression~\citep{squire2015memory}. We implement exponential decay based on reasoning cycles rather than wall-clock time:
 
 \begin{equation}
-\text{decay} = \gamma \times \left(1 - \exp\left(-\frac{\text{days\_inactive}}{30}\right)\right)
+\text{decay} = \gamma \times \left(1 - \exp\left(-\frac{\text{cycles\_inactive}}{5}\right)\right)
 \label{eq:ltd}
 \end{equation}
 
@@ -221,7 +221,7 @@ Edges not traversed during reasoning gradually weaken via temporal decay, analog
 \text{new\_strength} = \max(\text{min\_strength}, \text{current\_strength} - \text{decay})
 \end{equation}
 
-where $\gamma = 0.05$ is the decay rate and $\text{min\_strength} = 0.1$ is a pruning threshold. This mechanism balances knowledge retention against the removal of irrelevant associations, allowing the graph to adapt to changing usage patterns while preventing catastrophic forgetting.
+where $\gamma = 0.05$ is the decay rate, $\text{cycles\_inactive}$ is the number of reasoning episodes since the edge was last used, and $\text{min\_strength} = 0.1$ is a pruning threshold. This cycle-based approach ensures that decay depends on usage patterns rather than absolute time---an edge unused for 5 reasoning cycles decays identically whether those cycles occur over 1 day or 1 month. This mechanism balances knowledge retention against the removal of irrelevant associations, allowing the graph to adapt to changing usage patterns while preventing catastrophic forgetting.
 
 \subsubsection{Emergent Connection Formation}
 

@@ -98,6 +98,9 @@ def apply_hebbian_learning(knowledge_graph: Any, reasoning_output: Dict, validat
     }
 
     try:
+        # increment cycle counters at the start of each reasoning cycle
+        # this increases the inactivity counter for all previously-activated edges
+        knowledge_graph.increment_cycle_counters()
         # 1. Strengthen edges explicitly used in reasoning (if source_triples provided)
         source_triples = reasoning_output.get("source_triples", [])
         triple_pattern = re.compile(r"(.*?)\s*--(.+?)-->\s*(.*)")
