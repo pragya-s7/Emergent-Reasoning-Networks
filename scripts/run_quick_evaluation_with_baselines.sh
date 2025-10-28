@@ -1,6 +1,6 @@
 #!/bin/bash
-# Quick Evaluation with Baselines - Option A for Workshop Paper
-# Runtime: ~30-45 minutes total
+# Quick Evaluation with Baselines - Minimal Viable for Workshop Paper
+# Runtime: ~2-3 hours total (scaled up from toy evaluation)
 
 set -e  # Exit on error
 
@@ -14,8 +14,8 @@ ANTHROPIC_KEY=$1
 export TOKENIZERS_PARALLELISM=false
 
 echo "================================================================================"
-echo "KAIROS QUICK EVALUATION WITH BASELINES - Option A"
-echo "Runtime estimate: 30-45 minutes"
+echo "KAIROS MINIMAL VIABLE EVALUATION - Scaled Up"
+echo "Runtime estimate: 2-3 hours (50+ entities, 20 cycles, 200 episodes)"
 echo "================================================================================"
 echo ""
 
@@ -59,14 +59,14 @@ echo ""
 echo "⏭️  Validation evaluation skipped (existing results reused)."
 echo ""
 
-# Step 3: Ablation Study (15 questions x 7 conditions = 105 calls, ~25-30 min)
+# Step 3: Ablation Study (20 questions x 7 conditions = 140 calls, ~35-40 min)
 echo "================================================================================"
-echo "STEP 3/4: ABLATION STUDY (15 questions)"
-echo "Estimated time: 25-30 minutes"
+echo "STEP 3/4: ABLATION STUDY (20 questions)"
+echo "Estimated time: 35-40 minutes"
 echo "================================================================================"
 python scripts/evaluate_ablation_fixed.py \
     --anthropic-key ${ANTHROPIC_KEY} \
-    --n-questions 15 \
+    --n-questions 20 \
     --output-dir ${OUTPUT_DIR} \
     --seed 42
 
@@ -74,10 +74,10 @@ echo ""
 echo "✅ Ablation study complete!"
 echo ""
 
-# Step 4: Hebbian Plasticity (5 cycles x 3 queries = 15 calls, ~4-5 min)
+# Step 4: Hebbian Plasticity (20 cycles x 10 queries = 200 calls, ~50-60 min)
 echo "================================================================================"
-echo "STEP 4/4: HEBBIAN PLASTICITY (5 cycles)"
-echo "Estimated time: 4-5 minutes"
+echo "STEP 4/4: HEBBIAN PLASTICITY (20 cycles)"
+echo "Estimated time: 50-60 minutes"
 echo "================================================================================"
 
 # Copy KG for plasticity test
@@ -86,8 +86,8 @@ cp output/knowledge_graph.json ${OUTPUT_DIR}/plasticity_kg_initial.json
 python scripts/evaluate_plasticity_fixed.py \
     --anthropic-key ${ANTHROPIC_KEY} \
     --kg-path ${OUTPUT_DIR}/plasticity_kg_initial.json \
-    --cycles 5 \
-    --queries-per-cycle 3 \
+    --cycles 20 \
+    --queries-per-cycle 10 \
     --output-dir ${OUTPUT_DIR} \
     --seed 42 \
     --use-repeated-queries
@@ -133,17 +133,19 @@ echo "==========================================================================
 REPORT_FILE="${OUTPUT_DIR}/EVALUATION_SUMMARY.md"
 
 cat > ${REPORT_FILE} << EOF
-# Kairos Quick Evaluation Summary (Option A)
+# Kairos Minimal Viable Evaluation Summary
 
 **Generated:** $(date)
 **Run ID:** ${TIMESTAMP}
 
 ## Configuration
+- Knowledge Graph: 50+ entities, 8-10 relation types
 - Validation questions: 10
-- Ablation questions: 15
-- Plasticity cycles: 5
+- Ablation questions: 20
+- Plasticity cycles: 20
+- Plasticity queries per cycle: 10
 - Baseline questions: 10
-- Total API calls: ~200
+- Total API calls: ~350 (200 for plasticity alone)
 
 ## Output Files
 
@@ -194,10 +196,10 @@ EOF
 
 echo ""
 echo "================================================================================"
-echo "🎉 QUICK EVALUATION COMPLETE!"
+echo "🎉 MINIMAL VIABLE EVALUATION COMPLETE!"
 echo "================================================================================"
 echo ""
-echo "Total runtime: ~45 minutes"
+echo "Total runtime: ~2-3 hours"
 echo ""
 echo "📁 All results saved to: ${OUTPUT_DIR}/"
 echo ""
@@ -205,7 +207,14 @@ echo "📊 Key files:"
 echo "  - Summary: ${REPORT_FILE}"
 echo "  - Figures: ${OUTPUT_DIR}/figures/"
 echo "  - Raw data: ${OUTPUT_DIR}/*.csv"
+echo "  - KG snapshots: ${OUTPUT_DIR}/plasticity_kg_cycle_*.json"
 echo ""
-echo "🚀 Next: Review results and write your Results/Discussion sections!"
+echo "✅ Expected outcomes:"
+echo "  - 5-15 emergent connections formed"
+echo "  - Edge strength increased 15-25%"
+echo "  - Retrieval time decreased over cycles"
+echo "  - Trust score improvement demonstrated"
+echo ""
+echo "🚀 Next: Review results and update paper with actual numbers!"
 echo ""
 echo "================================================================================"

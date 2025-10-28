@@ -33,7 +33,7 @@ class Entity:
 
 class Relation:
     def __init__(self, subject_id, predicate, object_id, confidence=1.0, source=None, version=None,
-                 created_at=None, metadata=None, activation_count=0, last_activated=None):
+                 created_at=None, metadata=None, activation_count=0, cycles_since_last_activation=None):
         self.subject_id = subject_id
         self.predicate = predicate
         self.object_id = object_id
@@ -45,7 +45,7 @@ class Relation:
 
         # Hebbian plasticity fields
         self.activation_count = activation_count
-        self.last_activated = last_activated
+        self.cycles_since_last_activation = cycles_since_last_activation  # None means never activated
 
     def to_dict(self):
         return {
@@ -58,7 +58,7 @@ class Relation:
             "version": self.version,
             "metadata": self.metadata,
             "activation_count": self.activation_count,
-            "last_activated": self.last_activated
+            "cycles_since_last_activation": self.cycles_since_last_activation
         }
 
     @staticmethod

@@ -51,6 +51,7 @@ def evaluate_plasticity(queries: list, kg: KnowledgeGraph, anthropic_key: str,
     with open(output_path, 'w', newline='') as csvfile:
         fieldnames = [
             'cycle', 'query_idx', 'query', 'latency', 'trust_score',
+            'retrieval_time_ms', 'facts_retrieved',  # NEW: retrieval efficiency metrics
             'edges_strengthened', 'entities_activated', 'emergent_edges_count',
             'avg_top_k_strength', 'monitored_edge_strength', 'reasoning_steps'
         ]
@@ -69,6 +70,17 @@ def evaluate_plasticity(queries: list, kg: KnowledgeGraph, anthropic_key: str,
                 edge_strength_before = {}
                 for subj, pred, obj in monitored_edges:
                     edge_strength_before[(subj, pred, obj)] = kg.get_edge_strength(subj, pred, obj)
+
+                # Measure retrieval efficiency BEFORE reasoning
+                retrieval_start = time.perf_counter()
+                # extract potential entities from query for retrieval test
+                query_words = query.split()
+                query_entities = [word for word in query_words if word in kg.label_to_id]
+                test_facts = []
+                for ent_label in query_entities[:5]:  # limit to first 5 entities found
+                    test_facts.extend(kg.query(subject=ent_label))
+                retrieval_time_ms = (time.perf_counter() - retrieval_start) * 1000  # convert to ms
+                facts_retrieved = len(test_facts)
 
                 # Run query with timing
                 start_time = time.time()
@@ -107,6 +119,8 @@ def evaluate_plasticity(queries: list, kg: KnowledgeGraph, anthropic_key: str,
                         'query': query,
                         'latency': latency,
                         'trust_score': trust_score,
+                        'retrieval_time_ms': retrieval_time_ms,
+                        'facts_retrieved': facts_retrieved,
                         'edges_strengthened': edges_strengthened,
                         'entities_activated': entities_activated,
                         'emergent_edges_count': len(emergent_edges),
@@ -144,9 +158,9 @@ def main():
                        help="Path to knowledge graph")
     parser.add_argument("--anthropic-key", required=True, help="Anthropic API key")
     parser.add_argument("--output-dir", default="output", help="Output directory")
-    parser.add_argument("--cycles", type=int, default=10, help="Number of reasoning cycles")
-    parser.add_argument("--queries-per-cycle", type=int, default=5,
-                       help="Number of queries per cycle")
+    parser.add_argument("--cycles", type=int, default=20, help="Number of reasoning cycles (default: 20 for minimal viable)")
+    parser.add_argument("--queries-per-cycle", type=int, default=10,
+                       help="Number of queries per cycle (default: 10 for minimal viable)")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--use-repeated-queries", action="store_true",
                        help="Use same queries each cycle (tests strengthening)")
@@ -210,7 +224,7 @@ def main():
 
     # Overall trends
     print("\nTrend Analysis:")
-    for metric in ['trust_score', 'avg_top_k_strength', 'latency', 'emergent_edges_count']:
+    for metric in ['trust_score', 'avg_top_k_strength', 'latency', 'retrieval_time_ms', 'emergent_edges_count']:
         if metric in df.columns:
             try:
                 analysis = analyze_plasticity_over_time(df, metric=metric)
@@ -235,6 +249,8 @@ def main():
     cycle_stats = df.groupby('cycle').agg({
         'trust_score': ['mean', 'std'],
         'avg_top_k_strength': ['mean', 'std'],
+        'retrieval_time_ms': ['mean', 'std'],
+        'facts_retrieved': 'mean',
         'edges_strengthened': 'sum',
         'emergent_edges_count': 'sum',
         'latency': 'mean'

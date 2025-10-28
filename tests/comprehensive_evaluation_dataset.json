@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "version": "1.0",
-    "description": "Comprehensive evaluation dataset for Kairos system testing",
-    "total_questions": 60,
+    "version": "1.1",
+    "description": "Comprehensive evaluation dataset for Kairos system testing - includes co-activation queries",
+    "total_questions": 75,
     "domains": ["security", "finance", "macroeconomics", "communications", "multi_domain"],
-    "difficulty_levels": ["simple", "multi_hop", "adversarial"]
+    "difficulty_levels": ["simple", "multi_hop", "adversarial"],
+    "coactivation_queries": 15
   },
   "evaluation_questions": [
     {
@@ -719,6 +720,186 @@
       "ground_truth_answer": "Discovery → Assessment → Prioritization → Audit → Fix → Verification → Risk Reduction",
       "requires_multi_hop": true,
       "tests_reasoning_quality": true
+    },
+    {
+      "id": "coact_001",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "Which contracts have vulnerabilities AND are deployed on Ethereum?",
+      "expected_conclusion_keywords": ["contract", "vulnerability", "Ethereum", "deployed"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Multiple contracts with vulnerabilities deployed on Ethereum",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["SmartContract", "Vulnerability", "Ethereum"]
+    },
+    {
+      "id": "coact_002",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "What security risks exist for contracts that provide liquidity?",
+      "expected_conclusion_keywords": ["security", "risk", "liquidity", "contract"],
+      "key_triples": ["ApolloContract --provides_liquidity_to--> ETH-USDC-Pool"],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Contracts providing liquidity may have vulnerabilities creating DeFi risks",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Security", "Liquidity", "Risk"]
+    },
+    {
+      "id": "coact_003",
+      "domain": "security",
+      "difficulty": "multi_hop",
+      "question": "Which unaudited contracts have high-risk vulnerabilities?",
+      "expected_conclusion_keywords": ["unaudited", "high-risk", "vulnerability"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Several unaudited contracts have high-risk vulnerabilities like Reentrancy",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Unaudited", "HighRisk", "Vulnerability"]
+    },
+    {
+      "id": "coact_004",
+      "domain": "finance",
+      "difficulty": "multi_hop",
+      "question": "What tokens trade on UniswapV3 and are governed by DAOs?",
+      "expected_conclusion_keywords": ["token", "UniswapV3", "DAO", "governance"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "UNI token trades on UniswapV3 and is governed by UniswapDAO",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Token", "UniswapV3", "DAO"]
+    },
+    {
+      "id": "coact_005",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "Which contracts integrate with exchanges and have been audited?",
+      "expected_conclusion_keywords": ["contract", "exchange", "audited", "integration"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Some audited contracts integrate with exchanges like UniswapV3",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["SmartContract", "Exchange", "Audited"]
+    },
+    {
+      "id": "coact_006",
+      "domain": "security",
+      "difficulty": "multi_hop",
+      "question": "What is the relationship between Reentrancy vulnerabilities and liquidity pools?",
+      "expected_conclusion_keywords": ["Reentrancy", "liquidity", "pool", "vulnerability"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Contracts with Reentrancy vulnerabilities providing liquidity create compounded risk",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Reentrancy", "LiquidityPool", "Risk"]
+    },
+    {
+      "id": "coact_007",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "Which networks host contracts that have been audited by ChainGuard?",
+      "expected_conclusion_keywords": ["network", "contract", "ChainGuard", "audit"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Ethereum, Polygon, and Arbitrum host ChainGuard-audited contracts",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Network", "ChainGuard", "Audit"]
+    },
+    {
+      "id": "coact_008",
+      "domain": "finance",
+      "difficulty": "multi_hop",
+      "question": "What tokens are in liquidity pools that use Curve?",
+      "expected_conclusion_keywords": ["token", "liquidity", "pool", "Curve"],
+      "key_triples": [],
+      "expected_reasoning_steps": 2,
+      "ground_truth_answer": "DAI and USDT are in pools hosted on Curve",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Token", "LiquidityPool", "Curve"]
+    },
+    {
+      "id": "coact_009",
+      "domain": "security",
+      "difficulty": "multi_hop",
+      "question": "Which contracts have both AccessControl vulnerabilities and dependencies on other contracts?",
+      "expected_conclusion_keywords": ["AccessControl", "dependency", "contract", "vulnerability"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Contracts with AccessControl issues that depend on others create cascading risks",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["AccessControl", "Dependency", "Risk"]
+    },
+    {
+      "id": "coact_010",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "What DAOs use on-chain voting for protocols with liquidity pools?",
+      "expected_conclusion_keywords": ["DAO", "voting", "protocol", "liquidity"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "AaveDAO uses on-chain voting and Aave has liquidity mechanisms",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["DAO", "OnChainVoting", "LiquidityPool"]
+    },
+    {
+      "id": "coact_011",
+      "domain": "security",
+      "difficulty": "multi_hop",
+      "question": "Which high-risk contracts have not been audited and are deployed on mainnet?",
+      "expected_conclusion_keywords": ["high-risk", "unaudited", "mainnet", "contract"],
+      "key_triples": [],
+      "expected_reasoning_steps": 4,
+      "ground_truth_answer": "Several high-risk unaudited contracts are deployed on Ethereum mainnet",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["HighRisk", "Unaudited", "Ethereum"]
+    },
+    {
+      "id": "coact_012",
+      "domain": "finance",
+      "difficulty": "multi_hop",
+      "question": "What security considerations exist for tokens that trade on multiple exchanges?",
+      "expected_conclusion_keywords": ["security", "token", "exchange", "risk"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Tokens on multiple exchanges face cross-exchange arbitrage and liquidity risks",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Security", "Token", "Exchange"]
+    },
+    {
+      "id": "coact_013",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "Which contracts integrate with UniswapV3 and have Reentrancy vulnerabilities?",
+      "expected_conclusion_keywords": ["contract", "UniswapV3", "Reentrancy", "integration"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "HermesContract integrates with UniswapV3 and may have Reentrancy risks",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["UniswapV3", "Reentrancy", "Integration"]
+    },
+    {
+      "id": "coact_014",
+      "domain": "security",
+      "difficulty": "multi_hop",
+      "question": "What audit firms have reviewed contracts with FrontRunning vulnerabilities?",
+      "expected_conclusion_keywords": ["audit", "firm", "FrontRunning", "vulnerability"],
+      "key_triples": [],
+      "expected_reasoning_steps": 3,
+      "ground_truth_answer": "Various audit firms including ChainGuard and CertiK review FrontRunning issues",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["AuditFirm", "FrontRunning", "Security"]
+    },
+    {
+      "id": "coact_015",
+      "domain": "multi_domain",
+      "difficulty": "multi_hop",
+      "question": "Which governance systems are used by DAOs that manage tokens trading on Curve?",
+      "expected_conclusion_keywords": ["governance", "DAO", "token", "Curve"],
+      "key_triples": [],
+      "expected_reasoning_steps": 4,
+      "ground_truth_answer": "DAOs use various voting systems to govern tokens that have pools on Curve",
+      "requires_multi_hop": true,
+      "triggers_coactivation": ["Governance", "DAO", "Curve"]
     }
   ]
 }
